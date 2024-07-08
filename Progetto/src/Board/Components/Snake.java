@@ -1,6 +1,6 @@
 package Board.Components;
 
-import Board.SupportingObjects.Position;
+import SupportingObjects.Position;
 
 import java.util.LinkedList;
 
