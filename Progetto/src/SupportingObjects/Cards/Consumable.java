@@ -1,9 +1,8 @@
 package SupportingObjects.Cards;
 
-import Patterns.PrototypePackage.Prototype;
 import Patterns.StatePackage.State;
 
-public interface Consumable extends Prototype {
+public interface Consumable extends Cloneable {
 
     /**
      *

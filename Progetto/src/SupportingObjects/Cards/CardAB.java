@@ -1,17 +1,15 @@
 package SupportingObjects.Cards;
 
 import Exceptions.CardInitializzationException;
-import Patterns.PrototypePackage.Prototype;
-
 import java.util.Objects;
 
-public abstract class CardAB implements Consumable, Prototype {
+public abstract class CardAB implements Consumable {
 
     private enum Type {
         BENCH, INN, DICES, SPRING, PARKINGTERM;
     }
 
-    private Type type;
+    protected Type type;
 
     public CardAB(String token) {
         switch (token) {
@@ -45,12 +43,14 @@ public abstract class CardAB implements Consumable, Prototype {
         return type;
     }
 
-    public void setType(Type type) {
-        this.type = type;
-    }
-
     @Override
-    public abstract Prototype clone();
+    public CardAB clone() {
+        try {
+            return (CardAB) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     protected boolean isSTOPOVER() {
         return this.type.equals(Type.BENCH) || this.type.equals(Type.INN);

@@ -1,7 +1,6 @@
 package SupportingObjects.Cards;
 
 import Exceptions.CardInitializzationException;
-import Patterns.PrototypePackage.Prototype;
 import Patterns.StatePackage.State;
 
 public class Card extends CardAB {
@@ -14,13 +13,13 @@ public class Card extends CardAB {
     public Card(Card target) throws CardInitializzationException {
         super(target);
         if(target != null) {
-            this.setType(target.getType());
+            this.type = target.getType();
         }
     }
 
     @Override
-    public Prototype clone() {
-        return new Card(this);
+    public Card clone() {
+        return new Card((Card) super.clone());
     }
 
     @Override

@@ -3,7 +3,7 @@ package SupportingObjects.Cards;
 public class Deck {
 
     /**
-     * This method allows to shuffle the cards's deck
+     * This method allows to shuffle the cards' deck
      */
     public void shuffle() {
 

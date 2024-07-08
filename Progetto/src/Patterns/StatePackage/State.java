@@ -1,7 +1,5 @@
 package Patterns.StatePackage;
 
-import PlayerObjects.Player;
-
 public abstract class State {
 
      protected Object o;

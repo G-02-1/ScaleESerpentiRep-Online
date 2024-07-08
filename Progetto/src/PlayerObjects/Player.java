@@ -5,7 +5,6 @@ import Board.Grid.GridCells.Cell;
 import Patterns.StatePackage.State;
 import SupportingObjects.Dice.Dice;
 import SupportingObjects.Position;
-import Patterns.PlayerStatePackage.PlayerState;
 
 public class Player extends PlayerAB {
 
@@ -151,17 +150,17 @@ public class Player extends PlayerAB {
     @Override
     public void throwAgain() {
         this.state.setActiveState();
-        this.throwDice(this.position);
-        this.moveAgain(this.diceResult);
         this.sendNotification("THROWAGAIN" + "-" + this.diceResult);
+        this.throwDice(this.position);
+        this.moveAgain(this.diceResult); //
     }
 
     @Override
     public void moveAgain(int diceResult) {
         this.state.setActiveState();
+        this.sendNotification("MOVEAGAIN" + "-" + this.diceResult);
         Position newPosition = this.computePosition(diceResult);
         this.move(newPosition);
-        this.sendNotification("MOVEAGAIN" + "-" + this.id);
     }
 
     @Override
@@ -179,8 +178,8 @@ public class Player extends PlayerAB {
     @Override
     public void pickACard() {
         this.state.setActiveState();
-        //TODO
         this.sendNotification("PICKACARD" + "-" + this.id);
+        //TODO
     }
 
     @Override
