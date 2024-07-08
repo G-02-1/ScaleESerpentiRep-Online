@@ -23,15 +23,4 @@ public abstract class State {
      */
     public abstract boolean move();
 
-    /**
-     * This method sets the card's state to AVAILABLE
-     */
-    public abstract void setAvailableState();
-
-    /**
-     * This method sets the player's state to BLOCKED
-     */
-    public abstract void setNotAvailableState();
-
-
 }

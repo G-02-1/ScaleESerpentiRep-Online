@@ -26,13 +26,4 @@ public class ActivePlayerState extends State {
         return true;
     }
 
-    @Override
-    public void setAvailableState() {
-        //Not a Card but a Player -> Do nothing
-    }
-
-    @Override
-    public void setNotAvailableState() {
-        //Not a Card but a Player -> Do nothing
-    }
 }

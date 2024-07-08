@@ -29,17 +29,14 @@ public class BlockedPlayerState extends State {
         if(turns > 0) {
             turns--;
             return false;
-        } return true;
-    }
-
-    @Override
-    public void setAvailableState() {
-        //Not a Card but a Player -> Do nothing
-    }
-
-    @Override
-    public void setNotAvailableState() {
-        //Not a Card but a Player -> Do nothing
+        }
+        else {
+            if(this.o instanceof Player) {
+                Player player = (Player) o;
+                player.changeState(new ActivePlayerState(player));
+            }
+            return true;
+        }
     }
 
 }

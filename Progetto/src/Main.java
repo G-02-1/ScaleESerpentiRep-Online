@@ -53,10 +53,13 @@ public class Main {
 //            System.out.println("STRING");
 //        }
 
-        enum Type {
-            BENCH, INN, DICES, SPRING, PARKINGTERM;
-        }
+//        enum Type {
+//            BENCH, INN, DICES, SPRING, PARKINGTERM;
+//        }
+//
+//        System.out.println(Type.BENCH.toString());
 
-        System.out.println(Type.BENCH.toString());
+        int a = 5 / 2;
+        System.out.println(a);
     }
 }

@@ -1,10 +1,8 @@
 package SupportingObjects.Cards;
 
 import Exceptions.CardInitializzationException;
-import Patterns.StatePackage.State;
 
-public class Card extends CardAB {
-    private State state;
+public class Card extends Consumable {
 
     public Card(String token) throws CardInitializzationException {
         super(token);
@@ -44,10 +42,5 @@ public class Card extends CardAB {
             return 7;
         }
         return -1;
-    }
-
-
-    public void changeState(State state) {
-        this.state = state;
     }
 }

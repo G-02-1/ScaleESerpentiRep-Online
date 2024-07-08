@@ -12,11 +12,11 @@ public interface PlayerIF {
     void changeState(State playerState);
 
     /**
-     *
+     * This method sets the diceResult
      * @param position
-     * @return the throw's result
+     * @return true if the player must throw the dices again (ONLY IF HE PLAYS WITH TWO DICES)
      */
-    void throwDice(Position position);
+    boolean throwDice(Position position);
 
     /**
      * Move the player on the cell at position player.getPosition() + diceResult

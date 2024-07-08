@@ -3,6 +3,7 @@ package Board.Grid.GridBoard;
 import Board.Components.BoardComponent;
 import Board.Grid.GridCells.Cell;
 import Board.Grid.GridCells.CellAB;
+import Board.Grid.GridCells.SpecialCell;
 import Exceptions.NoSuchCellNumberException;
 import SupportingObjects.Position;
 import Exceptions.CellNotFoundException;
@@ -18,7 +19,25 @@ public interface GridIF extends Iterable {
      *
      * @return the board's number of cells
      */
-    int getCellsNumber();
+    default int getCellsNumber() {
+        return getAllCells().size();
+    }
+
+    /**
+     *
+     * @return the board's boardComponentCells' number
+     */
+    default int getBoardComponentCellsNumber() {
+        return this.getBoardComponentCells().size();
+    }
+
+    /**
+     *
+     * @return the board's SpecialCells' number
+     */
+    default int getSpecialCellsNumber() {
+        return this.getSpecialCells().size();
+    }
 
     /**
      *
@@ -83,22 +102,40 @@ public interface GridIF extends Iterable {
 
     /**
      *
-     * @return an ArrayList<Cell> whose pair is like (activeCell, passiveCell)
+     * @return an ArrayList<Cell> whose pair is like (activeCell, passiveCell) if this cell contains a boardComponent
      */
-    default ArrayList<CellAB> getBoardComponentCells() {
+    default ArrayList<Cell> getBoardComponentCells() {
         ArrayList<CellAB> cells = getAllCells();
-        ArrayList<CellAB> boardComponentCells = new ArrayList<>();
+        ArrayList<Cell> boardComponentCells = new ArrayList<>();
         for (CellAB cell : cells) {
             if (cell instanceof Cell) {
-                if (((Cell) cell).containsBoardComponentActive()) {
-                    boardComponentCells.add(cell);
-                    boardComponentCells.add(((Cell) cell).PASSIVE);
+                Cell boardComponentCell = (Cell) cell;
+                if (boardComponentCell.containsBoardComponentActive()) {
+                    boardComponentCells.add(boardComponentCell);
+                    boardComponentCells.add(boardComponentCell.PASSIVE);
                 }
             }
 
         }
         Collections.sort(boardComponentCells);
         return boardComponentCells;
+    }
+
+    /**
+     *
+     * @return an ArrayList<Cell> of SpecialCells
+     */
+    default ArrayList<SpecialCell> getSpecialCells() {
+        ArrayList<CellAB> cells = getAllCells();
+        ArrayList<SpecialCell> specialCells = new ArrayList<>();
+        for (CellAB cell : cells) {
+            if(cell instanceof SpecialCell) {
+                SpecialCell specialCell = (SpecialCell) cell;
+                specialCells.add(specialCell);
+            }
+        }
+        Collections.sort(specialCells);
+        return specialCells;
     }
 
     /**
