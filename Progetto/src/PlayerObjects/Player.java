@@ -1,7 +1,7 @@
 package PlayerObjects;
 
 import Board.Grid.GridBoard.Board;
-import Board.Grid.GridCells.Cell;
+import Board.Grid.GridCells.StandardCell;
 import Patterns.StatePackage.State;
 import SupportingObjects.Cards.Card;
 import SupportingObjects.Cards.Deck;
@@ -61,11 +61,10 @@ public class Player extends PlayerAB {
 
     @Override
     public boolean throwDice(Position position) {
-        int[] criticalRange = board.getCriticalRange();
+        int criticalValue = board.getCriticalValue();
         if(this.dicesNumber == 1)
             this.diceResult = dices[0].throwDice();
-        if(this.currentNumber >= criticalRange[0]  &&
-                this.currentNumber <= criticalRange[1]) {
+        if(this.currentNumber >= criticalValue) {
             this.almostWon();
             this.diceResult = dices[0].throwDice();
         }
@@ -145,7 +144,7 @@ public class Player extends PlayerAB {
 
     @Override
     public void climbTheLadder() {
-        Cell current = (Cell) this.currentCell;
+        StandardCell current = (StandardCell) this.currentCell;
         //I cast it safely because the trigger effect is sent from the specific cell
         Position newPosition = current.getPASSIVE().getPosition();
         this.sendNotification("CLIMB" + "-" + newPosition);
@@ -154,7 +153,7 @@ public class Player extends PlayerAB {
 
     @Override
     public void sliceOnSnake() {
-        Cell current = (Cell) this.currentCell;
+        StandardCell current = (StandardCell) this.currentCell;
         //I cast it safely because the trigger effect is sent from the specific cell
         Position newPosition = current.getPASSIVE().getPosition();
         this.sendNotification("SLICE" + "-" + newPosition);
@@ -197,7 +196,11 @@ public class Player extends PlayerAB {
     }
 
     private boolean nearFinishLine() {
-        return board.getNumberCell(board.getCell(this.position)) <= this.board.getCellsNumber() - 12;
+        try {
+            return board.getNumberCell(board.getCell(this.position)) <= this.board.getCellsNumber() - 12;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

@@ -1,102 +1,76 @@
 package Board.Grid.GridCells;
 
-import Board.Components.BoardComponent;
-import Board.Components.BoardComponentIF;
-import Board.Components.Ladder;
-import Board.Components.Snake;
-import Board.Grid.GridBoard.GridIF;
+import Board.Grid.GridBoard.Grid;
 import SupportingObjects.Position;
-import Exceptions.IllegalPositioningException;
 
-public class Cell extends CellAB {
+import java.util.ArrayList;
+import java.util.Objects;
 
-    private BoardComponentIF boardComponent = null;
-    protected boolean ACTIVE = false;
-    public Cell PASSIVE;
+public abstract class Cell implements Comparable<Cell> {
 
-    public Cell(Position position, int number, GridIF board) {
-        super(position, number, board);
+    protected final Position position;
+
+    protected Grid board;
+    protected int number;
+
+    public Cell(Position position, int number, Grid board) {
+        this.position = position;
+        this.number = number;
+        this.board = board;
     }
 
-    public Cell getPASSIVE() {
-        return PASSIVE;
+    public int getPosX() {
+        return this.position.getX();
     }
 
-    @Override
-    public int triggerEffect() {
-        if(this.containsBoardComponentActive()) {
-            if(this.containLadder()) {
-                return 0;
-            }
-            if(this.containSnake()) {
-                return 1;
-            }
-        }
-        return -1;
+    public int getPosY() {
+        return this.position.getY();
     }
 
-    private boolean containSnake() {
-        return this.boardComponent instanceof Snake && ACTIVE;
+    public Position getPosition() {
+        return this.position;
     }
 
-    private boolean containLadder() {
-        return this.boardComponent instanceof Ladder && ACTIVE;
+    public int getNumber() {
+        return this.number;
     }
 
-    public boolean containsBoardComponentActive() {
-        return this.boardComponent != null && this.ACTIVE;
+    public ArrayList<Position> getDistancePosition(Cell cell) {
+        return this.position.computeDistance(cell.position);
+    }
+    public int getDistanceNumber(Cell cell) {
+        return this.position.computeDistance(cell.position).size();
     }
 
-    public boolean containsBoardComponentPassive() {
-        return this.boardComponent != null && !this.ACTIVE;
+    public void setNumber(int number) {
+        this.number = number;
     }
 
-    public void setBoardComponent(BoardComponent boardComponent) throws IllegalPositioningException {
-        try {
-            if(containsBoardComponentActive() || containsBoardComponentPassive()) {
-                throw new IllegalPositioningException("cannot insert a BoardComponent into a cell that already " +
-                        "contains one's active or passive position");
-            }
-            else {
-                if(this.getPosition().equals(boardComponent.getActivePosition())) {
-                    PASSIVE = (Cell) board.setPassivePosition(boardComponent);
-                    if(PASSIVE != null) {
-                        this.boardComponent = boardComponent;
-                        ACTIVE = true;
-                    } else {
-                        throw new IllegalPositioningException("setPassivePosition(boardComponent) failed!");
-                    }
-                }
-                if(this.getPosition().equals(boardComponent.getPassivePosition())) {
-                    this.boardComponent = boardComponent;
-                    ACTIVE = false;
-                }
-                else {
-                    throw new IllegalPositioningException("Illegal positioning: unmatched position");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    public abstract int triggerEffect();
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Cell n°: " + this.getNumber());
-        if(this.containsBoardComponentActive()) {
-            if(this.boardComponent instanceof Ladder) {
-                sb.append("\nContains feet of a ladder");
-            }
-            if(this.boardComponent instanceof Snake) {
-                sb.append("\nContains the head of a snake");
-            }
-        }
-        if(this.containsBoardComponentPassive()) {
-            sb.append("\nContains the head of a snake");
-        }
-        return sb.toString();
+        return "Cell n°: " + this.getNumber();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (this == o) return true;
+        if (!(o instanceof StandardCell)) return false;
+        StandardCell gridCell = (StandardCell) o;
+        return getPosX() == gridCell.getPosX() && getPosY() == gridCell.getPosY();
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPosX(), getPosY());
+    }
+
+    @Override
+    public int compareTo(Cell c) {
+        if(this.number < c.number) {return -1;}
+        if(this.number == c.number) {return 0;}
+        else {return 1;}
+    }
 }

@@ -1,18 +1,17 @@
 package Board.Grid.GridCells;
 
-import Board.Grid.GridBoard.GridIF;
-import SupportingObjects.Cards.Card;
+import Board.Grid.GridBoard.Grid;
 import SupportingObjects.Position;
 import Exceptions.SpecialCellInitializzationException;
 
-public class SpecialCell extends CellAB {
+public class SpecialCell extends Cell {
 
     private enum Type {
         BENCH, INN, DICES, SPRING, PICKACARD;
     }
     private Type type;
 
-    public SpecialCell(Position position, int number, GridIF board, String token) {
+    public SpecialCell(Position position, int number, Grid board, String token) {
         super(position, number, board);
         switch (token) {
             case "BENCH":

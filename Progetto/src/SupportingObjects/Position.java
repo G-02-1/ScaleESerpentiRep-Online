@@ -7,13 +7,13 @@ public class Position implements Comparable<Position> {
 
     int X, Y;
 
-    public int getX() {
+    public int getX() { //width --> number of columns
         return X;
     }
 
     public int getY() {
         return Y;
-    }
+    } //height --> row's number
 
     public Position(int X, int Y) {
         this.X = X;

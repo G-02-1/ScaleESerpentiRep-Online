@@ -1,6 +1,7 @@
 package SupportingObjects.Cards;
 
 import Board.Grid.GridBoard.Board;
+import Exceptions.InvalidDeckInstantiationException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,21 +27,31 @@ public enum Deck { //SINGLETON
      */
 
     public void GenerateDeck(Board board, boolean specialCard) {
-        this.cards = new ArrayList<>();
-        this.board = board;
-        int numberOfSpecialCells = this.board.getSpecialCellsNumber();
-        int numberOfBenchAndDices = 2 * numberOfSpecialCells;
-        int numberOfInn = numberOfSpecialCells / 2;
-        int numberOfSpring = numberOfSpecialCells / 3;
-        int numberOfParkingTerm = 0;
-        if(specialCard) {numberOfParkingTerm = numberOfSpecialCells / 4;}
-        this.numberOfCards = numberOfBenchAndDices + numberOfInn + numberOfSpring + numberOfParkingTerm;
+        if(this.board.isCustom()) {
+            this.cards = new ArrayList<>();
+            this.board = board;
+            int specialCellsNumber = this.board.getSpecialCellsNumber();
+            if (specialCellsNumber == 0) {
+                throw new InvalidDeckInstantiationException("Cannot create a Deck of cards if there isn't not even a special cell");
+            }
+            int numberOfSpecialCells = specialCellsNumber;
+            int numberOfBenchAndDices = 2 * numberOfSpecialCells;
+            int numberOfInn = numberOfSpecialCells / 2;
+            int numberOfSpring = numberOfSpecialCells / 3;
+            int numberOfParkingTerm = 0;
+            if (specialCard) {
+                numberOfParkingTerm = numberOfSpecialCells / 4;
+            }
+            this.numberOfCards = numberOfBenchAndDices + numberOfInn + numberOfSpring + numberOfParkingTerm;
 
-        /*
-        Since the number of special cells is equal to the number of DICES cards and is equal to the number of BENCH cards
-        and obviously is the highest I will use one of them as upperbound
-         */
-        this.fillDeck(numberOfSpecialCells, numberOfInn, numberOfSpring, numberOfParkingTerm);
+            /*
+            Since the number of special cells is equal to the number of DICES cards and is equal to the number of BENCH cards
+            and obviously is the highest I will use one of them as upperbound
+             */
+            this.fillDeck(numberOfSpecialCells, numberOfInn, numberOfSpring, numberOfParkingTerm);
+        } else {
+            throw new InvalidDeckInstantiationException("Cannot instantiate a cards'Deck for a Standard Board");
+        }
     }
 
     private void fillDeck(int bound, int numberOfInn, int numberOfSpring, int numberOfParkingTerm) {

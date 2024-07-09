@@ -1,7 +1,7 @@
 package PlayerObjects;
 
 import Board.Grid.GridBoard.Board;
-import Board.Grid.GridCells.CellAB;
+import Board.Grid.GridCells.Cell;
 import SupportingObjects.Position;
 import Patterns.ObserverComunication.Manager;
 
@@ -13,7 +13,7 @@ public abstract class PlayerAB extends Manager implements PlayerIF {
 
     protected Position position;
 
-    protected CellAB currentCell;
+    protected Cell currentCell;
 
     protected int currentNumber;
 
@@ -38,7 +38,11 @@ public abstract class PlayerAB extends Manager implements PlayerIF {
     }
 
     private void updateCurrentNumber() {
-        this.currentNumber = this.board.getNumberCell(this.currentCell);
+        try {
+            this.currentNumber = this.board.getNumberCell(this.currentCell);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

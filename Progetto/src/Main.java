@@ -1,9 +1,11 @@
+import Board.Grid.GridBoard.Board;
 import SupportingObjects.Position;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         /*
         HashMap<Integer, String> hm = new HashMap<>();
         hm.put(1, "aaaah");
@@ -59,7 +61,15 @@ public class Main {
 //
 //        System.out.println(Type.BENCH.toString());
 
-        int a = 5 / 2;
-        System.out.println(a);
+//        int a = (int) Math.sqrt(48);
+//        System.out.println(a);
+//        TimeUnit.SECONDS.sleep(5);
+//        System.out.println(a);
+
+        Board board1 = new Board(10, 10, true);
+        System.out.println(board1);
+
+        Board board2 = new Board(6, 8, true);
+        System.out.println(board2);
     }
 }

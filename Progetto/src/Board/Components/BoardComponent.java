@@ -1,10 +1,56 @@
 package Board.Components;
 
+import Exceptions.BoardComponentInstantiationException;
 import SupportingObjects.Position;
 
 import java.util.LinkedList;
 
-public abstract class BoardComponent implements BoardComponentIF {
+public class BoardComponent implements BoardComponentIF {
+
+    private enum Type {
+        LADDER, SNAKE;
+    }
+
+    private final Type type;
+    private final Position ACTIVE, PASSIVE;
+
+    public BoardComponent(String type, Position ACTIVE, Position PASSIVE) {
+        if(type.equalsIgnoreCase("LADDER")) {
+            if(ACTIVE.compareTo(PASSIVE) >= 0) throw new BoardComponentInstantiationException("Impossible to instantiate a LADDER with ACTIVE grater than PASSIVE position");
+            this.type = Type.LADDER;
+            this.ACTIVE = ACTIVE;
+            this.PASSIVE = PASSIVE;
+        }
+        else if(type.equalsIgnoreCase("SNAKE")) {
+            if(ACTIVE.compareTo(PASSIVE) < 0) throw new BoardComponentInstantiationException("Impossible to instantiate a SNAKE with PASSIVE grater than ACTIVE position");
+            this.type = Type.SNAKE;
+            this.ACTIVE = ACTIVE;
+            this.PASSIVE = PASSIVE;
+        }
+        else {
+            throw new BoardComponentInstantiationException("Invalid type: " + type);
+        }
+    }
+
+    @Override
+    public boolean isLadder() {
+        return this.type.equals(Type.LADDER);
+    }
+
+    @Override
+    public boolean isSnake() {
+        return this.type.equals(Type.SNAKE);
+    }
+
+    @Override
+    public Position getActivePosition() {
+        return ACTIVE;
+    }
+
+    @Override
+    public Position getPassivePosition() {
+        return PASSIVE;
+    }
 
     LinkedList<Position> crossed = new LinkedList<>();
 
@@ -16,6 +62,12 @@ public abstract class BoardComponent implements BoardComponentIF {
                 crossed.add(new Position(i, j));
             }
         }
+    }
+
+    @Override
+    public LinkedList<Position> getExtension() {
+        this.calculateExtension();
+        return this.crossed;
     }
 
     @Override

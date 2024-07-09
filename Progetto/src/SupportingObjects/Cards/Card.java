@@ -15,6 +15,7 @@ public class Card extends Consumable {
         }
     }
 
+    //Prototype
     @Override
     public Card clone() {
         return new Card((Card) super.clone());
