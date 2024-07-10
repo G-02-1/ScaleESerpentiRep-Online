@@ -1,5 +1,6 @@
 package Patterns.StatePackage;
 
+import Exceptions.InvalidStateInstantiationException;
 import PlayerObjects.Player;
 
 public class BlockedPlayerState extends State {
@@ -7,7 +8,11 @@ public class BlockedPlayerState extends State {
     private int turns;
 
     public BlockedPlayerState(Player player) {
-        super(player);
+        if(!(o instanceof Player)) {
+            throw new InvalidStateInstantiationException("Cannot instantiate an BlockedPlayerState for a not Player object");
+        } else {
+            this.o = (Player) o;
+        }
     }
 
     @Override
@@ -39,4 +44,19 @@ public class BlockedPlayerState extends State {
         }
     }
 
+    @Override
+    public void setAutomaticModeState() {
+        //Simulation not Player, so do nothing
+    }
+
+    @Override
+    public void setManualModeState() {
+        //Simulation not Player, so do nothing
+    }
+
+    @Override
+    public boolean manual() {
+        //Simulation not Player, so return false
+        return false;
+    }
 }

@@ -8,7 +8,7 @@ public class Card extends Consumable {
         super(token);
     }
 
-    public Card(Card target) throws CardInitializzationException {
+    private Card(Card target) throws CardInitializzationException {
         super(target);
         if(target != null) {
             this.type = target.getType();

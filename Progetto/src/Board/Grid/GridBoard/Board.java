@@ -35,7 +35,7 @@ public class Board implements Grid {
             if (this.CUSTOM) {
                 //special cells' number is maximum 25% of total cells' number
                 expectedSpecialCellsNumber = (int) (0.25 * this.CELLNUMBER);
-                //if custom: board components' number is maximum 24% of total cells' number
+                //if custom: board components' number is at least 24% of total cells' number
                 this.BOARDCOMPONENTNUMBER = (int) (0.24 * this.CELLNUMBER) % 2 == 0 ? (int) (0.24 * this.CELLNUMBER) : (int) (0.24 * this.CELLNUMBER) + 1;
                 //BENCH and DICES cells' number is maximum 16% of special cells' number
                 this.BENCHNUMBERandDICESNUMBER = (int) (0.16 * expectedSpecialCellsNumber);
@@ -47,6 +47,7 @@ public class Board implements Grid {
                 this.SPECIALCELLSNUMBER = (2 * this.BENCHNUMBERandDICESNUMBER) + (2 * this.INNNUMBERandSPRINGNUMBER) + this.PICKACARDNUMBER;
             } else {
                 this.SPECIALCELLSNUMBER = this.BENCHNUMBERandDICESNUMBER = this.INNNUMBERandSPRINGNUMBER = this.PICKACARDNUMBER = 0;
+                //if custom: board components' number is at least 40% of total cells' number
                 this.BOARDCOMPONENTNUMBER = (int) (0.4 * this.CELLNUMBER) % 2 == 0 ? (int) (0.4 * this.CELLNUMBER) : (int) (0.4 * this.CELLNUMBER) + 1;
             }
             this.NORMALCELLNUMBER = this.CELLNUMBER - this.SPECIALCELLSNUMBER;

@@ -1,4 +1,5 @@
 import Board.Grid.GridBoard.Board;
+import SupportingObjects.Cards.Card;
 import SupportingObjects.Position;
 
 import java.util.*;
@@ -66,10 +67,9 @@ public class Main {
 //        TimeUnit.SECONDS.sleep(5);
 //        System.out.println(a);
 
-        Board board1 = new Board(10, 10, true);
-        System.out.println(board1);
+        Card card1 = new Card("BENCH");
+        Card card2 = card1.clone();
 
-        Board board2 = new Board(6, 8, true);
-        System.out.println(board2);
+        System.out.println("card 1: " + card1 + ",  card 2: " + card2);
     }
 }

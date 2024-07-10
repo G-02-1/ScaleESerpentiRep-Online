@@ -3,7 +3,6 @@ package Patterns.ObserverComunication;
 import java.util.ArrayList;
 
 public abstract class Manager {
-
     ArrayList<Subscriber> subscribers = new ArrayList<>();
     public void addSubscriber(Subscriber subscriber) {
         if(!(subscribers.contains(subscriber))) {

@@ -1,11 +1,16 @@
 package Patterns.StatePackage;
 
+import Exceptions.InvalidStateInstantiationException;
 import PlayerObjects.Player;
 
 public class ActivePlayerState extends State {
 
-    public ActivePlayerState(Player player) {
-        super(player);
+    public ActivePlayerState(Object o) {
+        if(!(o instanceof Player)) {
+            throw new InvalidStateInstantiationException("Cannot instantiate an ActivePlayerState for a not Player object");
+        } else {
+            this.o = (Player) o;
+        }
     }
 
     @Override
@@ -24,6 +29,22 @@ public class ActivePlayerState extends State {
     @Override
     public boolean move() {
         return true;
+    }
+
+    @Override
+    public void setAutomaticModeState() {
+        //Simulation not Player, so do nothing
+    }
+
+    @Override
+    public void setManualModeState() {
+        //Simulation not Player, so do nothing
+    }
+
+    @Override
+    public boolean manual() {
+        //Simulation not Player, so return false
+        return false;
     }
 
 }

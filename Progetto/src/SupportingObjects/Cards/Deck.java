@@ -9,47 +9,48 @@ import java.util.Collections;
 public enum Deck { //SINGLETON
 
     INSTANCE;
-
-    private int numberOfCards;
-
+    private int numberOfCards, picked;
     private ArrayList<Card> cards;
-
     private Board board;
+    private boolean ACTIVE;
 
     /*
     I will set the number of cards like this:
-    a BENCH one and a DICES one for each special cell;
-    a INN one for every 2 special cells;
-    an SPRING one for every 3 special cells;
-    a PARKINGTERM one  for every 4.
+    a BENCH one and a DICES one for each pick a card cell;
+    a INN one for every 2 pick a card cell;
+    an SPRING one for every 3 pick a card cell;
+    a PARKINGTERM one for every 4.
     To obtain a BENCH card or a DICES card with 32.78% (33%) of probability, a INN card with 16.39% (16%) of probability
     an SPRING card with 9.83% (10%) of probability and, if the observer wants, a PARKINGTERM card with 7.69% (8%) of probability.
      */
 
-    public void GenerateDeck(Board board, boolean specialCard) {
-        if(this.board.isCustom()) {
+    public void generateDeck(Board board, boolean specialCard) {
+        if(board.isCustom()) {
             this.cards = new ArrayList<>();
             this.board = board;
-            int specialCellsNumber = this.board.getSpecialCellsNumber();
-            if (specialCellsNumber == 0) {
-                throw new InvalidDeckInstantiationException("Cannot create a Deck of cards if there isn't not even a special cell");
+            int numberOfPickACardCells = this.board.getSpecialCellsNumber();
+            if (numberOfPickACardCells == 0) {
+                this.ACTIVE = false;
+                throw new InvalidDeckInstantiationException("Cannot create a Deck of cards if there isn't not even a pick a card cell");
             }
-            int numberOfSpecialCells = specialCellsNumber;
-            int numberOfBenchAndDices = 2 * numberOfSpecialCells;
-            int numberOfInn = numberOfSpecialCells / 2;
-            int numberOfSpring = numberOfSpecialCells / 3;
+            this.picked = 0;
+            this.ACTIVE = true;
+            int numberOfBenchAndDices = 2 * numberOfPickACardCells;
+            int numberOfInn = numberOfPickACardCells / 2;
+            int numberOfSpring = numberOfPickACardCells / 3;
             int numberOfParkingTerm = 0;
-            if (specialCard) {
-                numberOfParkingTerm = numberOfSpecialCells / 4;
+            if(specialCard) {
+                numberOfParkingTerm = numberOfPickACardCells / 4;
             }
             this.numberOfCards = numberOfBenchAndDices + numberOfInn + numberOfSpring + numberOfParkingTerm;
 
             /*
-            Since the number of special cells is equal to the number of DICES cards and is equal to the number of BENCH cards
+            Since the number of pick a card cell cells is equal to the number of DICES cards and is equal to the number of BENCH cards
             and obviously is the highest I will use one of them as upperbound
              */
-            this.fillDeck(numberOfSpecialCells, numberOfInn, numberOfSpring, numberOfParkingTerm);
+            this.fillDeck(numberOfPickACardCells, numberOfInn, numberOfSpring, numberOfParkingTerm);
         } else {
+            this.ACTIVE = false;
             throw new InvalidDeckInstantiationException("Cannot instantiate a cards'Deck for a Standard Board");
         }
     }
@@ -80,6 +81,10 @@ public enum Deck { //SINGLETON
         return numberOfCards;
     }
 
+    public boolean isACTIVE() {
+        return ACTIVE;
+    }
+
     /**
      * This method allows to put a card to the bottom of the deck
      * @param card
@@ -93,7 +98,13 @@ public enum Deck { //SINGLETON
      * @return the picked card
      */
     public Card pickACard() {
-        return cards.removeFirst();
+        this.picked++;
+        Card pickedCard = cards.removeFirst();
+        if(this.picked == this.getNumberOfCards()) {
+            Collections.shuffle(this.cards);
+            this.picked = 1;
+        }
+        return pickedCard;
     }
 
 }
