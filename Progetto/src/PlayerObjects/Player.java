@@ -7,6 +7,7 @@ import SupportingObjects.Cards.Card;
 import SupportingObjects.Cards.Deck;
 import SupportingObjects.Dice.Dice;
 import SupportingObjects.Position;
+import SupportingObjects.Token;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -19,9 +20,8 @@ public class Player extends PlayerAB {
     private int diceResult;
     private final int NORMAL = -1, LADDER = 0, SNAKE = 1, DICES = 2, SPRING = 3, BENCH = 4, INN = 5, PICKaCARD = 6;
 
-
-    public Player(int id, Board board, int diceNumber) {
-        super(id, board, diceNumber);
+    public Player(String name, Board board, int diceNumber) {
+        super(name, board, diceNumber);
         setDicesNumber(this.dicesNumber);
         PARKINGTERMcards = new ArrayList<>();
     }
@@ -53,7 +53,7 @@ public class Player extends PlayerAB {
                 this.win();
             }
             if(anotherTurn) {
-                this.sendNotification("ANOTHER" + "-" + this.diceResult);
+                this.sendNotification(Token.ANOTHER.name() + "-" + this.name);
                 this.turn();
             }
         }
@@ -64,9 +64,11 @@ public class Player extends PlayerAB {
         int criticalValue = board.getCriticalValue();
         if(this.dicesNumber == 1)
             this.diceResult = dices[0].throwDice();
+        this.sendNotification(Token.THROW.name() + "-" + this.name + "-" + this.diceResult);
         if(this.currentNumber >= criticalValue) {
             this.almostWon();
             this.diceResult = dices[0].throwDice();
+            this.sendNotification(Token.THROW.name() + "-" + this.name + "-" + this.diceResult);
         }
         else {
             int sum = 0;
@@ -74,13 +76,14 @@ public class Player extends PlayerAB {
                 sum += d.throwDice();
             }
             this.diceResult = sum;
+            this.sendNotification(Token.THROW.name() + "-" + this.name + "-" + this.diceResult);
             return sum == 12;
         }
         return false;
     }
 
     private void almostWon() {
-        this.sendNotification("ALMOST" + "-" + (this.board.getCellsNumber() - this.currentNumber));
+        this.sendNotification(Token.ALMOST.name() + "-" + this.name + "-" + (this.board.getCellsNumber() - this.currentNumber));
     }
 
     private Position computePosition(int diceResult) {
@@ -105,6 +108,7 @@ public class Player extends PlayerAB {
     public void move(Position newPosition) {
         this.setPosition(newPosition);
         //board.updatePlayerPosition(this.position);
+        this.sendNotification(Token.ARRIVE.name() + "-" + this.name + "-" + this.currentNumber);
         int ACTION = this.currentCell.triggerEffect();
         this.manageAction(ACTION);
     }
@@ -139,7 +143,7 @@ public class Player extends PlayerAB {
 
     @Override
     public void win() {
-        this.sendNotification("WIN" + "-" + this.id);
+        this.sendNotification(Token.WIN.name() + "-" + this.name);
     }
 
     @Override
@@ -147,7 +151,7 @@ public class Player extends PlayerAB {
         StandardCell current = (StandardCell) this.currentCell;
         //I cast it safely because the trigger effect is sent from the specific cell
         Position newPosition = current.getPASSIVE().getPosition();
-        this.sendNotification("CLIMB" + "-" + newPosition);
+        this.sendNotification(Token.CLIMB.name() + "-" + this.name + "-" + this.board.getCell(newPosition).toString());
         this.move(newPosition);
     }
 
@@ -156,7 +160,7 @@ public class Player extends PlayerAB {
         StandardCell current = (StandardCell) this.currentCell;
         //I cast it safely because the trigger effect is sent from the specific cell
         Position newPosition = current.getPASSIVE().getPosition();
-        this.sendNotification("SLICE" + "-" + newPosition);
+        this.sendNotification(Token.SLICE.name() + "-" + this.name + "-" + this.board.getCell(newPosition).toString());
         this.move(newPosition);
     }
 
@@ -167,14 +171,14 @@ public class Player extends PlayerAB {
      */
     public void throwAgain() {
         this.throwDice(this.position);
-        this.sendNotification("THROWAGAIN" + "-" + this.diceResult);
+        this.sendNotification(Token.THROWAGAIN.name() + "-" + this.name);
         Position newPosition = this.computePosition(this.diceResult);
         this.move(newPosition);
     }
 
     @Override
     public void moveAgain(int diceResult) {
-        this.sendNotification("MOVEAGAIN" + "-" + this.diceResult);
+        this.sendNotification(Token.MOVEAGAIN.name() + "-" + this.name + "-" + this.diceResult);
         Position newPosition = this.computePosition(this.diceResult);
         this.move(newPosition);
     }
@@ -182,14 +186,14 @@ public class Player extends PlayerAB {
     @Override
     public void standStill() {
         this.state.setBlockedState(1);
-        this.sendNotification("STANDSTILL" + "-" + 1);
+        this.sendNotification(Token.STANDSTILL.name() + "-" + this.name);
         /*
         with a 50% of probability the player with BlockedState will use the PARKINGTERM card
         unless it's near the finish line
          */
         if(new Random().nextInt(2) == 1 || nearFinishLine()) {
             if(!PARKINGTERMcards.isEmpty()) {
-                this.sendNotification("PARKINGTERM" + "-" + this.position);
+                this.sendNotification(Token.PARKINGTERM.name() + "-" + this.name + "-" + this.currentCell.toString());
                 this.usePARKINGTERMcard(PARKINGTERMcards.removeFirst());
             }
         }
@@ -206,13 +210,13 @@ public class Player extends PlayerAB {
     @Override
     public void goToSleep() {
         this.state.setBlockedState(2);
-        this.sendNotification("GOTOSLEEP" + "-" + 2);
+        this.sendNotification(Token.GOTOSLEEP.name() + "-" + this.name);
     }
 
     @Override
     public void pickACard() {
         Card picked = Deck.INSTANCE.pickACard();
-        this.sendNotification("PICKACARD" + "-" + picked);
+        this.sendNotification(Token.PICKACARD.name() + "-" + this.name + "-" + picked.toString());
         if(picked.isPARKINGTERM()) {
             PARKINGTERMcards.add(picked);
         } else {
@@ -228,11 +232,12 @@ public class Player extends PlayerAB {
 
     private void usePARKINGTERMcard(Card PARKINGTERM) {
         this.state.setActiveState();
+        Deck.INSTANCE.putBottom(PARKINGTERM);
     }
 
     @Override
     public void retreat(int plusValue) {
-        this.sendNotification("RETREAT" + "-" + plusValue);
+        this.sendNotification(Token.RETREAT.name() + "-" + this.name + "-" + plusValue);
     }
 
 }

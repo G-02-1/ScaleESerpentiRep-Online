@@ -89,7 +89,7 @@ public abstract class Consumable implements Cloneable {
 
     @Override
     public String toString() {
-        return "Card: " + this.getType().toString();
+        return "Card - " + this.getType().toString();
     }
 
     @Override

@@ -4,6 +4,7 @@ import Board.Components.BoardComponent;
 import Board.Grid.GridCells.StandardCell;
 import Board.Grid.GridCells.Cell;
 import Exceptions.NoSuchCellNumberException;
+import PlayerObjects.Player;
 import SupportingObjects.Position;
 import Exceptions.CellNotFoundException;
 import Exceptions.IllegalPositioningException;
@@ -16,32 +17,44 @@ public interface Grid extends Iterable {
 
     /**
      *
-     * @return true if the board is a custom board
+     * @return true if the board is a custom board.
      */
     boolean isCustom();
 
     /**
      *
-     * @return true if the board is a standard board
+     * @return true if the board is a standard board.
      */
     boolean isStandard();
 
     /**
      *
-     * @return all grid's cells
+     * @return all grid's cells.
      */
     ArrayList<Cell> getAllCells();
 
     /**
      *
      * @param cell
-     * @return the number that corresponds to the cell's number
+     * @return the number that corresponds to the cell's number.
      */
     int getNumberCell(Cell cell);
 
     /**
+     * This method put the player on the cell.
+     * @param position
+     */
+    void addPlayer(Position position, Player player);
+
+    /**
+     * This method remmove the player on the cell.
+     * @param position
+     */
+    void removePlayer(Position position, Player player);
+
+    /**
      *
-     * @return the board's number of cells
+     * @return the board's number of cells.
      */
     default int getCellsNumber() {
         return getAllCells().size();
@@ -49,7 +62,7 @@ public interface Grid extends Iterable {
 
     /**
      *
-     * @return the board's boardComponentCells' number
+     * @return the board's boardComponentCells' number.
      */
     default int getBoardComponentCellsNumber() {
         return this.getBoardComponentCells().size();
@@ -57,7 +70,7 @@ public interface Grid extends Iterable {
 
     /**
      *
-     * @return the board's SpecialCells' number
+     * @return the board's SpecialCells' number.
      */
     default int getSpecialCellsNumber() {
         if(this.isCustom()) {
@@ -69,7 +82,7 @@ public interface Grid extends Iterable {
     /**
      *
      * @return all assignable cells to assign a BoardComponent (Ladder or Snake),
-     * so if the observer/system wants to put a ladder/snake he can do on one of these cells
+     * so if the observer/system wants to put a ladder/snake he can do on one of these cells.
      */
     default ArrayList<Cell> assignableCells() {
         ArrayList<Cell> boardCmponentAssignableCells = this.getAllCells();
@@ -86,7 +99,7 @@ public interface Grid extends Iterable {
     /**
      *
      * @param number
-     * @return the cell that corresponds to this @param
+     * @return the cell that corresponds to this @param.
      */
     default Cell getCellNumber(int number) {
         for(Cell c : getAllCells()) {
@@ -107,7 +120,7 @@ public interface Grid extends Iterable {
 
     /**
      *
-     * @return the range in which the player will thow only a dice
+     * @return the range in which the player will thow only a dice.
      */
     default int getCriticalValue() {
         return getLastCell().getNumber() - 6;
@@ -116,7 +129,7 @@ public interface Grid extends Iterable {
     /**
      *
      * @param position
-     * @return a Cell which has as its position @param position
+     * @return a Cell which has as its position @param position.
      */
     default Cell getCell(Position position) throws CellNotFoundException {
         ArrayList<Cell> cells = getAllCells();
@@ -130,7 +143,7 @@ public interface Grid extends Iterable {
 
     /**
      *
-     * @return an ArrayList<CellAB> of Cells
+     * @return an ArrayList<CellAB> of Cells.
      */
     default ArrayList<Cell> getBoardComponentCells() {
         ArrayList<Cell> cells = getAllCells();
@@ -141,7 +154,7 @@ public interface Grid extends Iterable {
 
     /**
      *
-     * @return an ArrayList<CellAB> of SpecialCells
+     * @return an ArrayList<CellAB> of SpecialCells.
      */
     default ArrayList<Cell> getSpecialCells() {
         ArrayList<Cell> cells = new ArrayList<>();
@@ -154,9 +167,9 @@ public interface Grid extends Iterable {
     }
 
     /**
-     * sets the board's passive position in the specific cell
+     * sets the board's passive position in the specific cell.
      * @param boardComponent
-     * @return the completion of the insertion
+     * @return the completion of the insertion.
      */
     default Cell setPassivePosition(BoardComponent boardComponent) {
         try {
@@ -176,7 +189,7 @@ public interface Grid extends Iterable {
 
     /**
      *
-     * @return the specific iterator for the board's structure
+     * @return the specific iterator for the board's structure.
      */
     @Override
     Iterator<Cell> iterator();

@@ -9,28 +9,27 @@ import java.util.Objects;
 
 public abstract class PlayerAB extends Manager implements PlayerIF {
 
-    protected int id;
+    protected String name;
+    protected int currentNumber, dicesNumber;
 
     protected Position position;
-
     protected Cell currentCell;
 
-    protected int currentNumber;
-
     protected Board board;
-    protected int dicesNumber;
 
-    public PlayerAB(int id, Board board, int diceNumber) {
-        this.id = id;
+    public PlayerAB(String name, Board board, int diceNumber) {
+        this.name = name;
         this.board = board;
         this.dicesNumber = diceNumber;
         this.position = new Position(0,0);
     }
 
     protected void setPosition(Position position) {
+        this.board.removePlayer(position, (Player) this);
         this.position = position;
         this.updateCurrentCell();
         this.updateCurrentNumber();
+        this.board.addPlayer(position, (Player) this);
     }
 
     private void updateCurrentCell() {
@@ -61,6 +60,6 @@ public abstract class PlayerAB extends Manager implements PlayerIF {
 
     @Override
     public String toString() {
-        return "Player's id: " + this.id + ", at position: " + this.position.toString();
+        return "Player: " + this.name + ", at position: " + this.position.toString();
     }
 }

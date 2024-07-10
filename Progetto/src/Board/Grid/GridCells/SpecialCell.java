@@ -3,6 +3,7 @@ package Board.Grid.GridCells;
 import Board.Grid.GridBoard.Grid;
 import SupportingObjects.Position;
 import Exceptions.SpecialCellInitializzationException;
+import SupportingObjects.Token;
 
 public class SpecialCell extends Cell {
 

@@ -8,6 +8,7 @@ import Exceptions.BoardInstantiationException;
 import Exceptions.CellNotFoundException;
 import PlayerObjects.Player;
 import SupportingObjects.Position;
+import SupportingObjects.Token;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,33 +64,33 @@ public class Board implements Grid {
         int X = 0;
         int Y = 0;
         for(String type : newDisposition) {
-            if(type.equals("STANDARD")) {
+            if(type.equals(Token.STANDARD.name())) {
                 boardCells.add(new StandardCell(new Position(X, Y), number, this));
                 number++;
                 X++;
             }
-            if(type.equals("BENCH")) {
-                boardCells.add(new SpecialCell(new Position(X, Y), number, this, "BENCH"));
+            if(type.equals(Token.BENCH.name())) {
+                boardCells.add(new SpecialCell(new Position(X, Y), number, this, Token.BENCH.name()));
                 number++;
                 X++;
             }
-            if(type.equals("DICES")) {
-                boardCells.add(new SpecialCell(new Position(X, Y), number, this, "DICES"));
+            if(type.equals(Token.DICES.name())) {
+                boardCells.add(new SpecialCell(new Position(X, Y), number, this, Token.DICES.name()));
                 number++;
                 X++;
             }
-            if(type.equals("INN")) {
-                boardCells.add(new SpecialCell(new Position(X, Y), number, this, "INN"));
+            if(type.equals(Token.INN.name())) {
+                boardCells.add(new SpecialCell(new Position(X, Y), number, this, Token.INN.name()));
                 number++;
                 X++;
             }
-            if(type.equals("SPRING")) {
-                boardCells.add(new SpecialCell(new Position(X, Y), number, this, "SPRING"));
+            if(type.equals(Token.SPRING.name())) {
+                boardCells.add(new SpecialCell(new Position(X, Y), number, this, Token.SPRING.name()));
                 number++;
                 X++;
             }
-            if(type.equals("PICKACARD")) {
-                boardCells.add(new SpecialCell(new Position(X, Y), number, this, "PICKACARD"));
+            if(type.equals(Token.PICKACARD.name())) {
+                boardCells.add(new SpecialCell(new Position(X, Y), number, this, Token.PICKACARD.name()));
                 number++;
                 X++;
             }
@@ -110,21 +111,21 @@ public class Board implements Grid {
         int INNSPRINGCounter = this.INNNUMBERandSPRINGNUMBER;
         int PICKACARDCounter = this.PICKACARDNUMBER;
         while(standardCounter > 0) {
-            newDisposition.add("STANDARD");
+            newDisposition.add(Token.STANDARD.name());
             standardCounter--;
         }
         while(BENCHDICESCounter > 0) {
-            newDisposition.add("BENCH");
-            newDisposition.add("DICES");
+            newDisposition.add(Token.BENCH.name());
+            newDisposition.add(Token.DICES.name());
             BENCHDICESCounter--;
         }
         while(INNSPRINGCounter > 0) {
-            newDisposition.add("INN");
-            newDisposition.add("SPRING");
+            newDisposition.add(Token.INN.name());
+            newDisposition.add(Token.SPRING.name());
             INNSPRINGCounter--;
         }
         while(PICKACARDCounter > 0) {
-            newDisposition.add("PICKACARD");
+            newDisposition.add(Token.PICKACARD.name());
             PICKACARDCounter--;
         }
         Collections.shuffle(newDisposition);
@@ -187,6 +188,16 @@ public class Board implements Grid {
             return cells.indexOf(cell);
         }
         throw new CellNotFoundException("The cell: " + cell.toString() + " isn't in the board");
+    }
+
+    @Override
+    public void addPlayer(Position position, Player player) {
+        this.structure.get(this.getCell(position)).add(player);
+    }
+
+    @Override
+    public void removePlayer(Position position, Player player) {
+        this.structure.get(this.getCell(position)).remove(player);
     }
 
     @Override

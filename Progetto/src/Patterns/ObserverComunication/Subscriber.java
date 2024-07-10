@@ -1,5 +1,5 @@
 package Patterns.ObserverComunication;
 
 public interface Subscriber {
-    void update(String eventType);
+    void update(String message);
 }

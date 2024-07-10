@@ -67,9 +67,18 @@ public class Main {
 //        TimeUnit.SECONDS.sleep(5);
 //        System.out.println(a);
 
-        Card card1 = new Card("BENCH");
-        Card card2 = card1.clone();
+//        String a = "PICKACARD - Carta - DICES";
+//        String[] parts = a.split("-");
+//        System.out.println(parts[0]);
+//        System.out.println(parts[1].trim());
+//        System.out.println(parts[2].trim());
 
-        System.out.println("card 1: " + card1 + ",  card 2: " + card2);
+        ArrayList<Integer> i = new ArrayList<>();
+        for(int n = 0; n < 11; n++) {
+            i.add(n);
+        }
+        i.add(999);
+        System.out.println((int) i.stream().max(Integer::compareTo).orElseThrow());
+        //System.out.println(i.indexOf());
     }
 }

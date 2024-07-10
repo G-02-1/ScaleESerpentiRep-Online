@@ -2,11 +2,12 @@ package SupportingObjects.Cards;
 
 import Board.Grid.GridBoard.Board;
 import Exceptions.InvalidDeckInstantiationException;
+import SupportingObjects.Token;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public enum Deck { //SINGLETON
+public enum Deck {
 
     INSTANCE;
     private int numberOfCards, picked;
@@ -56,11 +57,11 @@ public enum Deck { //SINGLETON
     }
 
     private void fillDeck(int bound, int numberOfInn, int numberOfSpring, int numberOfParkingTerm) {
-        Card cardBENCH = new Card("BENCH");
-        Card cardDICES = new Card("DICES");
-        Card cardINN = new Card("INN");
-        Card cardSPRING = new Card("SPRING");
-        Card cardPARKINGTERM = new Card("PARKINGTERM");
+        Card cardBENCH = new Card(Token.BENCH.name());
+        Card cardDICES = new Card(Token.DICES.name());
+        Card cardINN = new Card(Token.INN.name());
+        Card cardSPRING = new Card(Token.SPRING.name());
+        Card cardPARKINGTERM = new Card(Token.PARKINGTERM.name());
         for(int i = 0; i < bound; i++) {
             cards.add(cardBENCH.clone());
             cards.add(cardDICES.clone());
@@ -106,5 +107,4 @@ public enum Deck { //SINGLETON
         }
         return pickedCard;
     }
-
-}
+} //SINGLETON

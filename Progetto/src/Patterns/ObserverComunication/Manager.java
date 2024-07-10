@@ -12,9 +12,9 @@ public abstract class Manager {
     public void removeSubscriber(Subscriber subscriber) {
         subscribers.remove(subscriber);
     }
-    public void sendNotification(String eventType) {
+    public void sendNotification(String message) {
         for(Subscriber s : subscribers) {
-            s.update(eventType);
+            s.update(message);
         }
     }
 }

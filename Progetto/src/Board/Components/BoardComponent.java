@@ -15,13 +15,13 @@ public class BoardComponent implements BoardComponentIF {
     private final Position ACTIVE, PASSIVE;
 
     public BoardComponent(String type, Position ACTIVE, Position PASSIVE) {
-        if(type.equalsIgnoreCase("LADDER")) {
+        if(type.equals(Type.LADDER.name())) {
             if(ACTIVE.compareTo(PASSIVE) >= 0) throw new BoardComponentInstantiationException("Impossible to instantiate a LADDER with ACTIVE grater than PASSIVE position");
             this.type = Type.LADDER;
             this.ACTIVE = ACTIVE;
             this.PASSIVE = PASSIVE;
         }
-        else if(type.equalsIgnoreCase("SNAKE")) {
+        else if(type.equalsIgnoreCase(Type.SNAKE.name())) {
             if(ACTIVE.compareTo(PASSIVE) < 0) throw new BoardComponentInstantiationException("Impossible to instantiate a SNAKE with PASSIVE grater than ACTIVE position");
             this.type = Type.SNAKE;
             this.ACTIVE = ACTIVE;
