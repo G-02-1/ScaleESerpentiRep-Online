@@ -11,6 +11,7 @@ import SupportingObjects.Token;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class Player extends PlayerAB {
 
@@ -44,9 +45,10 @@ public class Player extends PlayerAB {
 
 
     @Override
-    public void turn() {
+    public void turn() throws InterruptedException {
         if(this.state.move()) { //mechanism that returns true if the player is active and false if it is blocked (decreasing the waiting turns)
             boolean anotherTurn = throwDice(this.position);
+            TimeUnit.SECONDS.sleep(4);
             Position newPosition = this.computePosition(diceResult);
             this.move(newPosition);
             if (this.currentCell.equals(this.board.getLastCell())) {
@@ -105,15 +107,19 @@ public class Player extends PlayerAB {
     }
 
     @Override
-    public void move(Position newPosition) {
-        this.setPosition(newPosition);
-        //board.updatePlayerPosition(this.position);
-        this.sendNotification(Token.ARRIVE.name() + "-" + this.name + "-" + this.currentNumber);
-        int ACTION = this.currentCell.triggerEffect();
-        this.manageAction(ACTION);
+    public void move(Position newPosition) throws InterruptedException {
+        try {
+            this.setPosition(newPosition);
+            this.sendNotification(Token.ARRIVE.name() + "-" + this.name + "-" + this.currentNumber);
+            TimeUnit.SECONDS.sleep(4);
+            int ACTION = this.currentCell.triggerEffect();
+            this.manageAction(ACTION);
+        } catch (Exception e) {
+            System.out.println("Simulation interrupted");
+        }
     }
 
-    private void manageAction(int ACTION) {
+    private void manageAction(int ACTION) throws InterruptedException {
         switch (ACTION) {
             case LADDER:
                 this.climbTheLadder();
@@ -147,7 +153,7 @@ public class Player extends PlayerAB {
     }
 
     @Override
-    public void climbTheLadder() {
+    public void climbTheLadder() throws InterruptedException {
         StandardCell current = (StandardCell) this.currentCell;
         //I cast it safely because the trigger effect is sent from the specific cell
         Position newPosition = current.getPASSIVE().getPosition();
@@ -156,7 +162,7 @@ public class Player extends PlayerAB {
     }
 
     @Override
-    public void sliceOnSnake() {
+    public void sliceOnSnake() throws InterruptedException {
         StandardCell current = (StandardCell) this.currentCell;
         //I cast it safely because the trigger effect is sent from the specific cell
         Position newPosition = current.getPASSIVE().getPosition();
@@ -169,7 +175,7 @@ public class Player extends PlayerAB {
     I assumed that a player can only take advantage of one bonus and that therefore
     if he rolls 12 from a DICES cell or from a DICES card, then he will not throw the dices again
      */
-    public void throwAgain() {
+    public void throwAgain() throws InterruptedException {
         this.throwDice(this.position);
         this.sendNotification(Token.THROWAGAIN.name() + "-" + this.name);
         Position newPosition = this.computePosition(this.diceResult);
@@ -177,7 +183,7 @@ public class Player extends PlayerAB {
     }
 
     @Override
-    public void moveAgain(int diceResult) {
+    public void moveAgain(int diceResult) throws InterruptedException {
         this.sendNotification(Token.MOVEAGAIN.name() + "-" + this.name + "-" + this.diceResult);
         Position newPosition = this.computePosition(this.diceResult);
         this.move(newPosition);
@@ -214,7 +220,7 @@ public class Player extends PlayerAB {
     }
 
     @Override
-    public void pickACard() {
+    public void pickACard() throws InterruptedException {
         Card picked = Deck.INSTANCE.pickACard();
         this.sendNotification(Token.PICKACARD.name() + "-" + this.name + "-" + picked.toString());
         if(picked.isPARKINGTERM()) {
@@ -224,7 +230,7 @@ public class Player extends PlayerAB {
         }
     }
 
-    public void useACard(Card card) {
+    public void useACard(Card card) throws InterruptedException {
         int ACTION = card.triggerEffect();
         this.manageAction(ACTION);
         Deck.INSTANCE.putBottom(card);

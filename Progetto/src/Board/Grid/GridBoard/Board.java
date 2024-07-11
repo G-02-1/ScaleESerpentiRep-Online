@@ -1,5 +1,6 @@
 package Board.Grid.GridBoard;
 
+import Board.Components.BoardComponent;
 import Board.Grid.GridCells.SpecialCell;
 import Board.Grid.GridCells.StandardCell;
 import Board.Grid.GridCells.Cell;
@@ -10,18 +11,15 @@ import PlayerObjects.Player;
 import SupportingObjects.Position;
 import SupportingObjects.Token;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 public class Board implements Grid {
 
     private final int CELLNUMBER, X, Y, NORMALCELLNUMBER, BOARDCOMPONENTNUMBER, SPECIALCELLSNUMBER, BENCHNUMBERandDICESNUMBER, INNNUMBERandSPRINGNUMBER, PICKACARDNUMBER;
-    private final boolean CUSTOM;
+    private final boolean CUSTOM, CARDS;
     private HashMap<Cell, ArrayList<Player>> structure;
 
-    public Board(int X, int Y, boolean custom) {
+    public Board(int X, int Y, boolean custom, boolean cards) {
         this.CELLNUMBER = X * Y;
         int expectedSpecialCellsNumber = 0;
         if (this.CELLNUMBER < 20 || this.CELLNUMBER > 225) { //My decision
@@ -33,17 +31,25 @@ public class Board implements Grid {
             this.X = X;
             this.Y = Y;
             this.CUSTOM = custom;
+            this.CARDS = cards;
             if (this.CUSTOM) {
                 //special cells' number is maximum 25% of total cells' number
                 expectedSpecialCellsNumber = (int) (0.25 * this.CELLNUMBER);
                 //if custom: board components' number is at least 24% of total cells' number
                 this.BOARDCOMPONENTNUMBER = (int) (0.24 * this.CELLNUMBER) % 2 == 0 ? (int) (0.24 * this.CELLNUMBER) : (int) (0.24 * this.CELLNUMBER) + 1;
                 //BENCH and DICES cells' number is maximum 16% of special cells' number
-                this.BENCHNUMBERandDICESNUMBER = (int) (0.16 * expectedSpecialCellsNumber);
+                 int BAndDnumber = (int) (0.16 * expectedSpecialCellsNumber);
                 //INN and SPRING cells' number is maximum 12% of special cells' number
                 this.INNNUMBERandSPRINGNUMBER = (int) (0.12 * expectedSpecialCellsNumber);
-                //PICKACARD cells' number is maximum 44% of special cells' number
-                this.PICKACARDNUMBER = (int) (0.44 * expectedSpecialCellsNumber);
+                int pickaCardNumber = 0;
+                if(this.CARDS) {
+                    //PICKACARD cells' number is maximum 44% of special cells' number
+                    pickaCardNumber = (int) (0.44 * expectedSpecialCellsNumber);
+                } else {
+                    BAndDnumber = BAndDnumber + (int) (0.44 * expectedSpecialCellsNumber);
+                }
+                this.PICKACARDNUMBER = pickaCardNumber;
+                this.BENCHNUMBERandDICESNUMBER = BAndDnumber;
                 //Effective special cells' number
                 this.SPECIALCELLSNUMBER = (2 * this.BENCHNUMBERandDICESNUMBER) + (2 * this.INNNUMBERandSPRINGNUMBER) + this.PICKACARDNUMBER;
             } else {
@@ -130,6 +136,49 @@ public class Board implements Grid {
         }
         Collections.shuffle(newDisposition);
         return newDisposition;
+    }
+
+    public void putBoardComponent() {
+        int numberOfLadder = this.BOARDCOMPONENTNUMBER / 2;
+        int numberOfSnake = this.BOARDCOMPONENTNUMBER / 2;
+        final int maxExtension = 3;
+        boolean goOn = true;
+        while(goOn) {
+            ArrayList<Cell> assignable = this.assignableCells();
+            StandardCell candidate = (StandardCell) assignable.get(new Random().nextInt(assignable.size()));
+            ArrayList<StandardCell> candidates = findRange(candidate, assignable, maxExtension);
+            StandardCell passive = findPassive(candidate, candidates);
+            if(candidate.compareTo(passive) == -1 && numberOfLadder > 0) {
+                candidate.setBoardComponent(new BoardComponent(Token.LADDER.name(), candidate.getPosition(), passive.getPosition()));
+                numberOfLadder--;
+            }
+            if(candidate.compareTo(passive) == 1 && numberOfSnake > 0) {
+                candidate.setBoardComponent(new BoardComponent(Token.SNAKE.name(), candidate.getPosition(), passive.getPosition()));
+                numberOfSnake--;
+            }
+            if(numberOfLadder == 0 && numberOfSnake == 0) {
+                goOn = false;
+            }
+        }
+    }
+
+    private ArrayList<StandardCell> findRange(Cell candidate, ArrayList<Cell> assignable, int maxExtension) {
+        ArrayList<StandardCell> range = new ArrayList<>();
+        for(Cell cell: assignable) {
+            if(cell.getPosition().getX() <= candidate.getPosition().getX() + maxExtension && cell.getPosition().getX() >= candidate.getPosition().getX() - maxExtension &&
+                    cell.getPosition().getY() <= candidate.getPosition().getY() + maxExtension && cell.getPosition().getY() >= candidate.getPosition().getY() - maxExtension) {
+                range.add((StandardCell) cell);
+            }
+        }
+        return range;
+    }
+
+    private StandardCell findPassive(StandardCell candidate, ArrayList<StandardCell> candidates) {
+        StandardCell cell = candidates.get(new Random().nextInt(candidates.size()));
+        while(cell.getPosition().getY() == candidate.getPosition().getY()) {
+            cell = candidates.get(new Random().nextInt(candidates.size()));
+        }
+        return cell;
     }
 
     public int getCELLNUMBER() {

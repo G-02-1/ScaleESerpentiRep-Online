@@ -13,8 +13,9 @@ class DeckTest {
     int X = 6;
     int Y = 8;
     boolean cstm = true;
+    boolean cards = true;
     boolean specialCard = true;
-    Board board = new Board(X, Y, cstm);
+    Board board = new Board(X, Y, cstm, cards);
     int pickACardCells = this.board.getPICKACARDNUMBER();
 
     @Test

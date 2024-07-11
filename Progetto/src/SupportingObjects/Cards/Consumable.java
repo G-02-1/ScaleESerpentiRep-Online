@@ -1,9 +1,11 @@
 package SupportingObjects.Cards;
 
 import Exceptions.CardInitializzationException;
+
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Consumable implements Cloneable {
+public abstract class Consumable implements Cloneable, Serializable {
 
     private enum Type {
         BENCH, INN, DICES, SPRING, PARKINGTERM;

@@ -11,7 +11,8 @@ class BoardTest {
     int X = 6;
     int Y = 8;
     boolean cstm = true;
-    Board board = new Board(X, Y, cstm);
+    boolean cards = true;
+    Board board = new Board(X, Y, cstm, cards);
 
     @Test
     void getCELLNUMBER() {

@@ -3,7 +3,9 @@ package PlayerObjects;
 import Patterns.StatePackage.State;
 import SupportingObjects.Position;
 
-public interface PlayerIF {
+import java.io.Serializable;
+
+public interface PlayerIF extends Serializable {
 
     /**
      * This method change the player's state
@@ -21,33 +23,33 @@ public interface PlayerIF {
     /**
      * Move the player on the cell at position player.getPosition() + diceResult
      */
-    void move(Position newPosition);
+    void move(Position newPosition) throws InterruptedException;
 
     /**
      * This method simulates a player's turn
      */
-    void turn();
+    void turn() throws InterruptedException;
 
     /**
      * This method allows the player to climb the ladder
      */
-    void climbTheLadder();
+    void climbTheLadder() throws InterruptedException;
 
     /**
      * This method allows the player to slice on the snake
      */
-    void sliceOnSnake();
+    void sliceOnSnake() throws InterruptedException;
 
     /**
      * This method allows the player to throw again the dices
      */
-    void throwAgain();
+    void throwAgain() throws InterruptedException;
 
     /**
      * This method allows the player to move again for previous dice's result
      * @param diceResult
      */
-    void moveAgain(int diceResult);
+    void moveAgain(int diceResult) throws InterruptedException;
 
     /**
      * This method stop the player for one turn
@@ -62,7 +64,7 @@ public interface PlayerIF {
     /**
      * This method allows the player to pick a card
      */
-    void pickACard();
+    void pickACard() throws InterruptedException;
 
     /**
      * This method makes the player go backwards

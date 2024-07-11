@@ -20,8 +20,6 @@ public class Position implements Comparable<Position> {
         this.Y = Y;
     }
 
-
-
     public ArrayList<Position> computeDistance(Position p) {
         ArrayList<Position> distance = new ArrayList<>();
         for(int i = this.X; i <= p.X; i++) {
@@ -30,6 +28,10 @@ public class Position implements Comparable<Position> {
             }
         }
         return distance;
+    }
+
+    public boolean isValid() {
+        return this.X >= 0 && this.Y >= 0;
     }
 
     @Override

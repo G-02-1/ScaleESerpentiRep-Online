@@ -3,10 +3,11 @@ package Board.Grid.GridCells;
 import Board.Grid.GridBoard.Grid;
 import SupportingObjects.Position;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public abstract class Cell implements Comparable<Cell> {
+public abstract class Cell implements Comparable<Cell>, Serializable {
 
     protected final Position position;
 

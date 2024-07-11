@@ -9,11 +9,12 @@ import SupportingObjects.Position;
 import Exceptions.CellNotFoundException;
 import Exceptions.IllegalPositioningException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-public interface Grid extends Iterable {
+public interface Grid extends Iterable, Serializable {
 
     /**
      *
@@ -85,15 +86,15 @@ public interface Grid extends Iterable {
      * so if the observer/system wants to put a ladder/snake he can do on one of these cells.
      */
     default ArrayList<Cell> assignableCells() {
-        ArrayList<Cell> boardCmponentAssignableCells = this.getAllCells();
-        boardCmponentAssignableCells.removeAll(this.getSpecialCells());
-        for(Cell cell : boardCmponentAssignableCells) {
+        ArrayList<Cell> boardComponentAssignableCells = this.getAllCells();
+        boardComponentAssignableCells.removeAll(this.getSpecialCells());
+        for(Cell cell : boardComponentAssignableCells) {
             StandardCell cellBC = (StandardCell) cell;
             if(cellBC.containsBoardComponentActive() || cellBC.containsBoardComponentPassive()) {
-                boardCmponentAssignableCells.remove(cell);
+                boardComponentAssignableCells.remove(cell);
             }
         }
-        return boardCmponentAssignableCells;
+        return boardComponentAssignableCells;
     }
 
     /**
