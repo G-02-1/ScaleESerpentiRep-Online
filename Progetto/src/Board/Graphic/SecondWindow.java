@@ -19,9 +19,13 @@ public class SecondWindow extends JFrame {
     private Board board;
     private ArrayList<String> playersNames = new ArrayList<>();
 
+    private FirstWindow firstWindow;
 
-    public SecondWindow() {
-        // Set window properties
+
+    public SecondWindow(FirstWindow firstWindow) {
+
+        this.firstWindow = firstWindow;
+
         JFrame mainFrame = new JFrame();
         setSize(500, 200);
         setTitle("Are you a daredevil? Choose custom simulation!");
@@ -56,6 +60,21 @@ public class SecondWindow extends JFrame {
             }
         });
 
+        JButton backButton = new JButton("Back");
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        constraints.gridwidth = 2;
+        constraints.anchor = GridBagConstraints.CENTER;
+        panel.add(backButton, constraints);
+
+        backButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                firstWindow.show();
+            }
+        });
+
+
         // Add other components and logic as needed
 
         setLocationRelativeTo(null);
@@ -63,7 +82,9 @@ public class SecondWindow extends JFrame {
     }
 
     private void showSetSimulationDialog(JFrame parentFrame, boolean custom) {
-        // Creazione della finestra di dialogo
+//        SimulationDialog simulationDialog = new SimulationDialog(parentFrame, custom);
+//        simulationDialog.show();
+
         JDialog dialog = new JDialog(parentFrame, "Choose the essential field", true);
         dialog.setSize(800, 200);
         dialog.setLayout(new GridLayout(5, 2));
@@ -80,7 +101,7 @@ public class SecondWindow extends JFrame {
         dialog.add(heightLabel);
         dialog.add(heightNumberSpinner);
 
-        JLabel playersNumberLabel = new JLabel("Players' Number (1-6):");
+        JLabel playersNumberLabel = new JLabel("Players' Number (2-6):");
         SpinnerModel playersSpinnerModel = new SpinnerNumberModel(2, 2, 6, 1);
         JSpinner playersNumberSpinner = new JSpinner(playersSpinnerModel);
         dialog.add(playersNumberLabel);
@@ -120,9 +141,8 @@ public class SecondWindow extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(okButton);
         dialog.add(buttonPanel);
-
-        setLocationRelativeTo(null);
         dialog.setVisible(true);
+        dialog.setLocationRelativeTo(this);
     }
 
     private void showSetPlayersNamesDialog(JFrame parentFrame) {
@@ -164,13 +184,10 @@ public class SecondWindow extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(nextButton);
         dialog.add(buttonPanel);
-
-        setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 
     private int heightBasedOnPlayers() {
-        //TODO
         switch (NPlayer) {
             case 2:
                 return 150;
@@ -187,81 +204,8 @@ public class SecondWindow extends JFrame {
 
     private void showSetLadderAndSnakeDialog(JFrame parentFrame) {
         this.board = new Board(this.X, this.Y, this.CUSTOM, this.CARDS);
-
-
-        int bcNumber = this.board.getBOARDCOMPONENTNUMBER();
-        JDialog dialog = new JDialog(parentFrame, "Choose the number of ladder and snake", true);
-        dialog.setSize(400, heightBasedOnBCNumber());
-        dialog.setLayout(new GridLayout(bcNumber + 1, 2));
-
-        JComboBox<String>[] positionFields = new JComboBox[bcNumber];
-        ArrayList<String> ladderPositions = new ArrayList<>();
-        ArrayList<String> snakePositions = new ArrayList<>();
-        for (int i = 0; i < bcNumber / 2; i++) {
-            JLabel label = new JLabel("Ladder " + (i + 1) + ":");
-            positionFields[i] = new JComboBox<>(option());
-            dialog.add(label);
-            dialog.add(positionFields[i]);
-        }
-        for (int i = 0; i < bcNumber / 2; i++) {
-            JLabel label = new JLabel("Snake " + (i + 1) + ":");
-            positionFields[i] = new JComboBox<>(option());
-            dialog.add(label);
-            dialog.add(positionFields[i]);
-        }
-
-        JButton nextButton = new JButton("Next");
-        nextButton.addActionListener(e -> {
-            for (int i = 0; i < bcNumber; i++) {
-                String selectedItem = (String) positionFields[i].getSelectedItem();
-                if (i < bcNumber / 4) {
-                    ladderPositions.add(selectedItem);
-                } else {
-                    snakePositions.add(selectedItem);
-                }
-            }
-
-            // Print the results
-            System.out.println("Ladder positions: " + ladderPositions);
-            System.out.println("Snake positions: " + snakePositions);
-
-            dialog.dispose();
-            // Add your logic for the next steps here
-        });
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(nextButton);
-        dialog.add(buttonPanel);
-
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-
-    }
-
-    private Vector<String> option() {
-        Vector<String> toReturn = new Vector<>();
-        ArrayList<Cell> assignable = this.board.assignableCells();
-        for(Cell c : assignable) {
-            toReturn.add(c.toString());
-        }
-        return toReturn;
-    }
-
-
-    private int heightBasedOnBCNumber() {
-        return 500;
-//        switch () {
-//            case 2:
-//                return 150;
-//            case 3:
-//                return 170;
-//            case 4:
-//                return 200;
-//            case 5:
-//                return 250;
-//            default:
-//                return 300;
-//        }
+        LadderAndSnakeSetterWindow ladderAndSnakeSetterWindow = new LadderAndSnakeSetterWindow(board);
+        ladderAndSnakeSetterWindow.show();
     }
 
     private void showSetCustomSimulationDialog(JFrame parentFrame) {
@@ -297,8 +241,6 @@ public class SecondWindow extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(nextButton);
         dialog.add(buttonPanel);
-
-        setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
 
@@ -307,11 +249,5 @@ public class SecondWindow extends JFrame {
 
         GameWindow gameWindow = new GameWindow(board, playersNames, SPECIALCARD);
         gameWindow.setVisible(true);
-    }
-    public void openLadderAndSnakeSetterWindow() {
-
-        // Create and show the SecondWindow
-        LadderAndSnakeSetterWindow ladderAndSnakeSetterWindow = new LadderAndSnakeSetterWindow(board, playersNames, CARDS, SPECIALCARD);
-        ladderAndSnakeSetterWindow.setVisible(true);
     }
 }

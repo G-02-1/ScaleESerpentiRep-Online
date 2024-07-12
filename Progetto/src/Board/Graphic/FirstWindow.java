@@ -2,6 +2,7 @@ package Board.Graphic;
 
 import Patterns.Memento.Memento;
 import Patterns.Memento.Originator;
+import SimulationObject.Simulation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +18,6 @@ public class FirstWindow extends JFrame implements Originator {
 
         this.folderPath = folderPath;
 
-        // Set window properties
         setSize(500, 200);
         setTitle("Welcome on Snakes and Ladder!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,7 +36,6 @@ public class FirstWindow extends JFrame implements Originator {
 
         newSimulationButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Handle button click (e.g., open SecondWindow)
                 openSecondWindow();
                 ((JFrame) SwingUtilities.getWindowAncestor(newSimulationButton)).dispose();
             }
@@ -62,7 +61,6 @@ public class FirstWindow extends JFrame implements Originator {
                         //Close all windows
                         System.out.println("File selected: " + selectedFile.getAbsolutePath());
 
-                        //Open the GamePlay window
                         ((JFrame) SwingUtilities.getWindowAncestor(uploadSimulationButton)).dispose();
                         // Open the "GamePlay" window (replace with your actual code) //TODO
                         openGamePlayWindow();
@@ -90,7 +88,7 @@ public class FirstWindow extends JFrame implements Originator {
 
     public void openSecondWindow() {
         // Create and show the SecondWindow
-        SecondWindow secondWindow = new SecondWindow();
+        SecondWindow secondWindow = new SecondWindow(this);
         secondWindow.setVisible(true);
     }
 
@@ -102,6 +100,6 @@ public class FirstWindow extends JFrame implements Originator {
 
     @Override
     public void backup(Memento memento) {
-        //imposta la nuova simulazione
+        //Simulation simulation = new Simulation.Builder()
     }
 }

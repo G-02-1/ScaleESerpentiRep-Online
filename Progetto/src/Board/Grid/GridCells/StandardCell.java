@@ -65,7 +65,7 @@ public class StandardCell extends Cell {
                         throw new IllegalPositioningException("setPassivePosition(boardComponent) failed!");
                     }
                 }
-                if(this.getPosition().equals(boardComponent.getPassivePosition())) {
+                else if(this.getPosition().equals(boardComponent.getPassivePosition())) {
                     this.boardComponent = boardComponent;
                     ACTIVE = false;
                 }

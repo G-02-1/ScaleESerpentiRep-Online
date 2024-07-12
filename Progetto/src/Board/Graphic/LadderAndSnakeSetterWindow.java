@@ -1,102 +1,221 @@
 package Board.Graphic;
 
+import Board.Components.BoardComponent;
 import Board.Grid.GridBoard.Board;
+import Board.Grid.GridCells.Cell;
+import Board.Grid.GridCells.SpecialCell;
+import Board.Grid.GridCells.StandardCell;
+import SupportingObjects.Position;
+import SupportingObjects.Token;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
-public class LadderAndSnakeSetterWindow extends JFrame {
-    private final int numRows, numCols;
+public class LadderAndSnakeSetterWindow {
+    private JFrame frame;
+    private JButton[][] gridButtons;
+    private boolean placingLadder, placingSnakes;
+    private int gridSizeX, gridSizeY, selectedX1, selectedY1, selectedX2, selectedY2, cellCounter, snakeCounter, ladderCounter;
     private Board board;
-    private ArrayList<String> playersNames;
-    private boolean CARDS, SPECIALCARDS;
-    private JTextField[] ladderStartFields, ladderEndFields, snakeStartFields, snakeEndFields;
-    private JButton nextButton;
+    private Cell[][] cells;
 
-    public LadderAndSnakeSetterWindow(Board board, ArrayList<String> playersNames, boolean CARDS, boolean SPECIALCARDS) {
-        this.numRows = board.getY();
-        this.numCols = board.getX();
+    private JButton snakeButton, ladderButton;
+
+    public LadderAndSnakeSetterWindow(Board board) {
         this.board = board;
-        this.playersNames = playersNames;
-        this.CARDS = CARDS;
-        this.SPECIALCARDS = SPECIALCARDS;
+        this.ladderCounter = 0;
+        this.snakeCounter = 0;
+        int x = board.getX();
+        int y = board.getY();
+        this.cells = new Cell[x][y];
+        gridSizeX = x;
+        gridSizeY = y;
+        gridButtons = new JButton[x][y];
+        placingLadder = false;
+        placingSnakes = false;
+        cellCounter = 0;
 
-        int numLadders = this.board.getBOARDCOMPONENTNUMBER() / 2;
-        int numSnakes = this.board.getBOARDCOMPONENTNUMBER() / 2;
+        System.out.println(this.board.getBOARDCOMPONENTNUMBER());
 
-        setTitle("Choose Ladder and Snake position");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(numRows * 50, numCols * 50);
-        setLayout(new GridLayout(numRows, numCols));
+        frame = new JFrame("Grid");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
 
-        setLayout(new GridLayout(numLadders + numSnakes + 1, 4));
+        JPanel gridPanel = new JPanel(new GridLayout(x, y));
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                //Populate the matrix to match the cells on the board
+                cells[i][j] = this.board.getCell(new Position(i, j));
 
+                if(cells[i][j] instanceof SpecialCell) {
+                    gridButtons[i][j] = new JButton(""+cells[i][j].getNumber()+": SPEICAL ");
+                    gridButtons[i][j].setEnabled(false); //the special cells aren't placeable
+                } else {
+                    gridButtons[i][j] = new JButton(""+cells[i][j].getNumber()+"");
+                }
 
-        // Campi per le scale
-        JLabel ladderLabel = new JLabel("Ladders:");
-        ladderStartFields = new JTextField[numLadders];
-        ladderEndFields = new JTextField[numLadders];
-        for (int i = 0; i < numLadders; i++) {
-            ladderStartFields[i] = new JTextField();
-            ladderEndFields[i] = new JTextField();
-            add(new JLabel("Start:"));
-            add(ladderStartFields[i]);
-            add(new JLabel("End:"));
-            add(ladderEndFields[i]);
+                gridButtons[i][j].addActionListener(new CellClickListener(i, j));
+                gridPanel.add(gridButtons[i][j]);
+            }
         }
 
-        // Campi per i serpenti
-        JLabel snakeLabel = new JLabel("Snakes:");
-        snakeStartFields = new JTextField[numSnakes];
-        snakeEndFields = new JTextField[numSnakes];
-        for (int i = 0; i < numSnakes; i++) {
-            snakeStartFields[i] = new JTextField();
-            snakeEndFields[i] = new JTextField();
-            add(new JLabel("Start:"));
-            add(snakeStartFields[i]);
-            add(new JLabel("End:"));
-            add(snakeEndFields[i]);
-        }
+        frame.add(gridPanel, BorderLayout.CENTER);
 
-        // Bottone "Next"
-        nextButton = new JButton("Next");
-        nextButton.addActionListener(new NextButtonClickListener());
+        JPanel buttonPanel = new JPanel();
+        ladderButton = new JButton("Ladder");
+        snakeButton = new JButton("Snake");
 
-        // Aggiungi componenti alla finestra
-        add(ladderLabel);
-        add(new JLabel()); // Spazio vuoto
-        add(snakeLabel);
-        add(new JLabel()); // Spazio vuoto
-        for (int i = 0; i < numLadders; i++) {
-            add(new JLabel("Ladder " + (i + 1)));
-            add(new JLabel()); // Spazio vuoto
-            add(new JLabel("Snake " + (i + 1)));
-            add(new JLabel()); // Spazio vuoto
-        }
-        add(nextButton);
+        ladderButton.addActionListener(e -> {
+            placingLadder = true;
+            placingSnakes = false;
+        });
 
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
+        snakeButton.addActionListener(e -> {
+            placingSnakes = true;
+            placingLadder = false;
+        });
+
+        JButton nextButton = new JButton("Next");
+
+        nextButton.addActionListener(e -> {
+            if(ladderCounter < board.getBOARDCOMPONENTNUMBER() / 2) {
+                showError("Cannot instantiate a board with ladders' number minor than " + this.board.getBOARDCOMPONENTNUMBER() / 2);
+            }
+            if(snakeCounter < board.getBOARDCOMPONENTNUMBER() / 2) {
+               showError("Cannot instantiate a board with snakes' number minor than " + this.board.getBOARDCOMPONENTNUMBER() / 2);
+           } else {
+
+            }
+            System.out.println("Next button clicked");
+        });
+
+        buttonPanel.add(ladderButton);
+        buttonPanel.add(snakeButton);
+        buttonPanel.add(nextButton);
+
+        frame.add(buttonPanel, BorderLayout.SOUTH);
+
+        frame.setLocationRelativeTo(null);
+        frame.pack();
+        frame.setVisible(true);
     }
 
-    private class NextButtonClickListener implements ActionListener {
+    private class CellClickListener implements ActionListener {
+        private int x;
+        private int y;
+
+        public CellClickListener(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Ottieni i valori inseriti per scale e serpenti
-            for (int i = 0; i < ladderStartFields.length; i++) {
-                int ladderStart = Integer.parseInt(ladderStartFields[i].getText());
-                int ladderEnd = Integer.parseInt(ladderEndFields[i].getText());
-                System.out.println("Ladder " + (i + 1) + ": Start " + ladderStart + ", End " + ladderEnd);
-            }
-            for (int i = 0; i < snakeStartFields.length; i++) {
-                int snakeStart = Integer.parseInt(snakeStartFields[i].getText());
-                int snakeEnd = Integer.parseInt(snakeEndFields[i].getText());
-                System.out.println("Snake " + (i + 1) + ": Start " + snakeStart + ", End " + snakeEnd);
+            if (placingLadder || placingSnakes) {
+                if (ladderCounter == board.getBOARDCOMPONENTNUMBER() / 2 && snakeCounter == board.getBOARDCOMPONENTNUMBER() / 2) {
+                    ladderButton.setEnabled(false);
+                    snakeButton.setEnabled(false);
+                    showSuccess("Click next to start the simulation");
+                }
+                else if (cellCounter == 0) {
+                    selectedX1 = x;
+                    selectedY1 = y;
+                    cellCounter++;
+                } else if (cellCounter == 1) {
+                    selectedX2 = x;
+                    selectedY2 = y;
+                    cellCounter++;
+
+                    if (placingLadder) {
+                        if (ladderCounter == board.getBOARDCOMPONENTNUMBER() / 2) {
+                            ladderButton.setEnabled(false);
+                            showMessage("Placed the maximum ladders' number");
+                            cellCounter = 0;
+                        }
+                        else if (cells[selectedX1][selectedY1].compareTo(cells[selectedX2][selectedY2]) == 0) {
+                            showError("Cannot place a ladder on the same cell!");
+                            System.out.println("Ladder celle uguali");
+                            cellCounter = 0;
+                        }
+                        else if(cells[selectedX1][selectedY1].compareTo(cells[selectedX2][selectedY2]) == 1) {
+                            showError("Cannot place a ladder to a from a major cell to a minor one");
+                            cellCounter = 0;
+                        }
+                        else {
+                            StandardCell active = (StandardCell) cells[selectedX1][selectedY1];
+                            StandardCell passive = (StandardCell) cells[selectedX2][selectedY2];
+                            showMessage("Ladder: (" + selectedX1 + ", " + selectedY1 + ") - (" + selectedX2 + ", " + selectedY2 + ")" +
+                                    "\nAt " + active.toString() + ", " + passive.toString());
+
+                            BoardComponent ladder = new BoardComponent(Token.LADDER.name(), active.getPosition(), passive.getPosition());
+                            active.setBoardComponent(ladder);
+
+                            ladderCounter++;
+                            cellCounter = 0;
+
+                            //color change
+                            gridButtons[selectedX1][selectedY1].setBackground(Color.YELLOW);
+                            gridButtons[selectedX2][selectedY2].setBackground(Color.YELLOW);
+
+                            //set unclickable
+                            gridButtons[selectedX1][selectedY1].setEnabled(false);
+                            gridButtons[selectedX2][selectedY2].setEnabled(false);
+                        }
+                    } else {
+                        if (snakeCounter == board.getBOARDCOMPONENTNUMBER() / 2) {
+                            snakeButton.setEnabled(false);
+                            showMessage("Placed the maximum snakes' number");
+                            cellCounter = 0;
+                        }
+                        else if (cells[selectedX1][selectedY1].compareTo(cells[selectedX2][selectedY2]) == 0) {
+                            showError("Cannot place a snake on the same cell!");
+                            cellCounter = 0;
+                        }
+                        else if(cells[selectedX1][selectedY1].compareTo(cells[selectedX2][selectedY2]) == -1) {
+                            showError("Cannot place a snake to a from a minor cell to a major one");
+                            cellCounter = 0;
+                        }
+                        else {
+                            StandardCell active = (StandardCell) cells[selectedX1][selectedY1];
+                            StandardCell passive = (StandardCell) cells[selectedX2][selectedY2];
+                            showMessage("Snake: (" + selectedX1 + ", " + selectedY1 + ") - (" + selectedX2 + ", " + selectedY2 + ")" +
+                                    "\nAt " + active.toString() + ", " + passive.toString());
+
+                            BoardComponent snake = new BoardComponent(Token.SNAKE.name(), active.getPosition(), passive.getPosition());
+                            active.setBoardComponent(snake);
+
+                            snakeCounter++;
+                            cellCounter = 0;
+
+                            //color change
+                            gridButtons[selectedX1][selectedY1].setBackground(Color.GREEN);
+                            gridButtons[selectedX2][selectedY2].setBackground(Color.GREEN);
+
+                            //set unclickable
+                            gridButtons[selectedX1][selectedY1].setEnabled(false);
+                            gridButtons[selectedX2][selectedY2].setEnabled(false);
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private void showMessage(String message) {
+        JOptionPane.showMessageDialog(frame, message, "Message", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showSuccess(String message) {
+        JOptionPane.showMessageDialog(frame, message, "Success", JOptionPane.OK_OPTION);
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void show() {
+        SwingUtilities.invokeLater(() -> frame.setVisible(true));
     }
 }
