@@ -1,16 +1,13 @@
-package Board.Graphic;
+package Graphic;
 
 import Board.Grid.GridBoard.Board;
-import Board.Grid.GridCells.Cell;
 import Patterns.StatePackage.State;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class SecondWindow extends JFrame {
     private State state;
@@ -82,8 +79,6 @@ public class SecondWindow extends JFrame {
     }
 
     private void showSetSimulationDialog(JFrame parentFrame, boolean custom) {
-//        SimulationDialog simulationDialog = new SimulationDialog(parentFrame, custom);
-//        simulationDialog.show();
 
         JDialog dialog = new JDialog(parentFrame, "Choose the essential field", true);
         dialog.setSize(800, 200);
@@ -210,7 +205,7 @@ public class SecondWindow extends JFrame {
 
     private void showSetCustomSimulationDialog(JFrame parentFrame) {
         JDialog dialog = new JDialog(parentFrame, "Choose the optional field", true);
-        dialog.setSize(400, 200);
+        dialog.setSize(700, 200);
         dialog.setLayout(new GridLayout(3, 1));
 
         JCheckBox cardsCheckBox = new JCheckBox("Do you want to include cards?");

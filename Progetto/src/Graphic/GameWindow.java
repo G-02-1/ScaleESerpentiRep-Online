@@ -1,4 +1,4 @@
-package Board.Graphic;
+package Graphic;
 
 import Board.Grid.GridBoard.Board;
 import SupportingObjects.Position;

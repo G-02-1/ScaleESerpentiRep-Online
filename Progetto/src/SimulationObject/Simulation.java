@@ -10,6 +10,12 @@ import Patterns.StatePackage.State;
 import PlayerObjects.Player;
 import SupportingObjects.Token;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -118,13 +124,38 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
         }
     }//BUILDER
 
-    class MementoSimulation implements Memento {
+    public class MementoSimulation implements Memento {
         private final Simulation simulation;
 
         private MementoSimulation(Simulation simulation) {
             this.simulation = new Simulation(new Builder(simulation.X, simulation.Y, simulation.NPlayer,
                     simulation.isCUSTOM()).State(simulation.state).dicesNumber(simulation.dicesNumber).CARD(simulation.CARD)
                     .SPECIALCARD(simulation.SPECIALCARD).Board(simulation.board).players(simulation.players));
+            saveMemento();
+        }
+
+        private boolean saveMemento() {
+            try {
+
+                LocalDateTime currentDateTime = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy_HH-mm");
+                String formattedDateTime = currentDateTime.format(formatter);
+                String folderPath = "C:\\LaddersAndSnakeFolder\\saves\\" + formattedDateTime + ".dat";
+
+                FileOutputStream fos = new FileOutputStream(folderPath);
+
+                // Crea un flusso di output di oggetti per serializzare l'oggetto
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+                oos.writeObject(this.simulation); // Scrive l'oggetto su un file
+                fos.close();
+
+                System.out.println("Object successfully saved in: " + folderPath);
+
+            } catch (IOException e) {
+                return false;
+            }
+            return true;
         }
 
         private Simulation originator() {
@@ -286,10 +317,10 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
 
     @Override
     public void backup(Memento memento) {
-        //Do nothing
-        /*
-        Cannot load a simulation while running another one.
-         */
+//        this = new Simulation(new Builder(memento.X, simulation.Y, simulation.NPlayer,
+//                simulation.isCUSTOM()).State(simulation.state).dicesNumber(simulation.dicesNumber).CARD(simulation.CARD)
+//                .SPECIALCARD(simulation.SPECIALCARD).Board(simulation.board).players(simulation.players));
+//        saveMemento();
     }
 
     private void notifica(String msg) {

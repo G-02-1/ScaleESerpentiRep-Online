@@ -86,4 +86,9 @@ public class SpecialCell extends Cell {
         }
         return -1;
     }
+
+    @Override
+    public String toString() {
+        return this.type.name();
+    }
 }

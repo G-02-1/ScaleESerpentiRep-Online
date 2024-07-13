@@ -1,4 +1,4 @@
-package Board.Graphic;
+package Graphic;
 
 import Board.Components.BoardComponent;
 import Board.Grid.GridBoard.Board;
