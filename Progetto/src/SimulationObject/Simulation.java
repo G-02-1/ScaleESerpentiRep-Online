@@ -64,6 +64,19 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
             this.playersNames = new ArrayList<>(playersNames);
         }
 
+        public Builder(Simulation simulation) {
+            this.state = simulation.state;
+            this.X = simulation.X;
+            this.Y = simulation.Y;
+            this.NPlayers = simulation.NPlayer;
+            this.CUSTOM = simulation.CUSTOM;
+            this.CARD = simulation.CARD;
+            this.SPECIALCARD = simulation.SPECIALCARD;
+            this.dicesNumber = simulation.dicesNumber;
+            this.players = simulation.players;
+            this.board = simulation.board;
+        }
+
         public Builder dicesNumber(int val) {
             if(!CUSTOM) {
                 throw new IllegalSimulationInitializzation("Cannot choose the dices' number for a STANDARD simulation");
@@ -136,7 +149,6 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
 
         private boolean saveMemento() {
             try {
-
                 LocalDateTime currentDateTime = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy_HH-mm");
                 String formattedDateTime = currentDateTime.format(formatter);
@@ -158,6 +170,10 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
             return true;
         }
 
+        public Simulation getSimulation() {
+            return simulation;
+        }
+
         private Simulation originator() {
             return Simulation.this;
         }
@@ -166,7 +182,6 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
     private Simulation(Builder builder) {
         try {
             this.state = builder.state;
-
             this.X = builder.X;
             this.Y = builder.Y;
             this.NPlayer = builder.NPlayers;
@@ -316,11 +331,9 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
     }
 
     @Override
-    public void backup(Memento memento) {
-//        this = new Simulation(new Builder(memento.X, simulation.Y, simulation.NPlayer,
-//                simulation.isCUSTOM()).State(simulation.state).dicesNumber(simulation.dicesNumber).CARD(simulation.CARD)
-//                .SPECIALCARD(simulation.SPECIALCARD).Board(simulation.board).players(simulation.players));
-//        saveMemento();
+    public Simulation backup(Memento memento) {
+        MementoSimulation mementoSimulation = (MementoSimulation) memento;
+        return new Simulation(new Builder(mementoSimulation.getSimulation()));
     }
 
     private void notifica(String msg) {

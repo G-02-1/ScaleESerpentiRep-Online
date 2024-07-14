@@ -36,7 +36,7 @@ public class Board implements Grid {
                 //special cells' number is maximum 25% of total cells' number
                 expectedSpecialCellsNumber = (int) (0.25 * this.CELLNUMBER);
                 //if custom: board components' number is at least 24% of total cells' number
-                this.BOARDCOMPONENTNUMBER = (int) (0.24 * this.CELLNUMBER) % 2 == 0 ? (int) (0.24 * this.CELLNUMBER) : (int) (0.24 * this.CELLNUMBER) + 1;
+                this.BOARDCOMPONENTNUMBER = (int) (0.12 * this.CELLNUMBER) % 2 == 0 ? (int) (0.12 * this.CELLNUMBER) : (int) (0.12 * this.CELLNUMBER) + 1;
                 //BENCH and DICES cells' number is maximum 16% of special cells' number
                  int BAndDnumber = (int) (0.16 * expectedSpecialCellsNumber);
                 //INN and SPRING cells' number is maximum 12% of special cells' number
@@ -55,7 +55,7 @@ public class Board implements Grid {
             } else {
                 this.SPECIALCELLSNUMBER = this.BENCHNUMBERandDICESNUMBER = this.INNNUMBERandSPRINGNUMBER = this.PICKACARDNUMBER = 0;
                 //if custom: board components' number is at least 40% of total cells' number
-                this.BOARDCOMPONENTNUMBER = (int) (0.4 * this.CELLNUMBER) % 2 == 0 ? (int) (0.4 * this.CELLNUMBER) : (int) (0.4 * this.CELLNUMBER) + 1;
+                this.BOARDCOMPONENTNUMBER = (int) (0.2 * this.CELLNUMBER) % 2 == 0 ? (int) (0.2 * this.CELLNUMBER) : (int) (0.2 * this.CELLNUMBER) + 1;
             }
             this.NORMALCELLNUMBER = this.CELLNUMBER - this.SPECIALCELLSNUMBER;
             this.structure = new HashMap<>();

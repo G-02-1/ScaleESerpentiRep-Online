@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-public class FirstWindow extends JFrame implements Originator {
+public class FirstWindow extends JFrame {
 
     protected final String folderPath;
 
@@ -49,7 +49,7 @@ public class FirstWindow extends JFrame implements Originator {
         constraints.gridy = 0;
         panel.add(uploadSimulationButton, constraints);
 
-        uploadSimulationButton.addActionListener(new ActionListener() {
+        uploadSimulationButton.addActionListener(new ActionListener()  {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser(folderPath);
                 int result = fileChooser.showOpenDialog(null);
@@ -63,11 +63,11 @@ public class FirstWindow extends JFrame implements Originator {
                         System.out.println("File selected: " + selectedFile.getAbsolutePath());
 
                         //Restore the selected simulation
-                        restore(selectedFile.getAbsolutePath());
+                        Simulation simulation = restore(selectedFile.getAbsolutePath());
 
                         ((JFrame) SwingUtilities.getWindowAncestor(uploadSimulationButton)).dispose();
                         // Open the "GamePlay" window (replace with your actual code) //TODO
-                        openGamePlayWindow();
+                        openGamePlayWindow(simulation);
 
                     } else {
                         JOptionPane.showMessageDialog(null, "Invalid file extension. Please choose a valid file.");
@@ -80,11 +80,11 @@ public class FirstWindow extends JFrame implements Originator {
         add(panel);
     }
 
-    private static boolean isValidExtension(String extension) {
+    private boolean isValidExtension(String extension) {
         return extension.equalsIgnoreCase("dat");
     }
 
-    private static void openGamePlayWindow() {
+    private void openGamePlayWindow(Simulation simulation) {
         // Implement your "GamePlay" window here
         // ...
     }
@@ -94,26 +94,16 @@ public class FirstWindow extends JFrame implements Originator {
         secondWindow.setVisible(true);
     }
 
-    @Override
-    public Memento save() {
-        //Do nothing
-        return null;
-    }
-
-    @Override
-    public void backup(Memento memento) {
-
-    }
-
-    public void restore(String filePath) {
+    public Simulation restore(String filePath) {
         try {
             FileInputStream door = new FileInputStream(filePath);
             ObjectInputStream reader = new ObjectInputStream(door);
             Simulation.MementoSimulation x = (Simulation.MementoSimulation) reader.readObject();
-            backup(x);
+            return Simulation.backup(x);
         } catch (IOException | ClassNotFoundException e) {
             showError("The selected file has unidentified problem");
         }
+        return null;
     }
 
     private void showError(String message) {

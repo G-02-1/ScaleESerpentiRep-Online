@@ -1,7 +1,9 @@
 package Patterns.Memento;
 
+import SimulationObject.Simulation;
+
 public interface Originator {
     Memento save();
-    void backup(Memento memento);
+    Simulation backup(Memento memento);
 
 }

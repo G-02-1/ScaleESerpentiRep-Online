@@ -2,6 +2,7 @@ package Graphic;
 
 import Board.Grid.GridBoard.Board;
 import Patterns.StatePackage.State;
+import SimulationObject.Simulation;
 
 import javax.swing.*;
 import java.awt.*;
