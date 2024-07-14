@@ -179,6 +179,14 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
         }
     } //Memento
 
+    public static class Backuper {
+        static Simulation simulation;
+
+        public static Simulation backup(MementoSimulation mementoSimulation) {
+            return simulation.backup(mementoSimulation);
+        }
+    }
+
     private Simulation(Builder builder) {
         try {
             this.state = builder.state;

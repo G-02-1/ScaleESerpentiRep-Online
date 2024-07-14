@@ -1,7 +1,6 @@
 package Graphic;
 
-import Patterns.Memento.Memento;
-import Patterns.Memento.Originator;
+
 import SimulationObject.Simulation;
 
 import javax.swing.*;
@@ -99,7 +98,7 @@ public class FirstWindow extends JFrame {
             FileInputStream door = new FileInputStream(filePath);
             ObjectInputStream reader = new ObjectInputStream(door);
             Simulation.MementoSimulation x = (Simulation.MementoSimulation) reader.readObject();
-            return Simulation.backup(x);
+            return Simulation.Backuper.backup(x);
         } catch (IOException | ClassNotFoundException e) {
             showError("The selected file has unidentified problem");
         }
