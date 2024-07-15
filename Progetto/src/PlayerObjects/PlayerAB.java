@@ -17,6 +17,10 @@ public abstract class PlayerAB extends Manager implements PlayerIF {
 
     protected Board board;
 
+    public String getName() {
+        return name;
+    }
+
     public PlayerAB(String name, Board board, int diceNumber) {
         this.name = name;
         this.board = board;

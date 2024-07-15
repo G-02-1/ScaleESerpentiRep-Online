@@ -4,6 +4,6 @@ import SimulationObject.Simulation;
 
 public interface Originator {
     Memento save();
-    Simulation backup(Memento memento);
+    Simulation backup(Simulation simulation);
 
 }

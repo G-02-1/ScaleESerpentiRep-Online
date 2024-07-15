@@ -2,6 +2,7 @@ package PlayerObjects;
 
 import Board.Grid.GridBoard.Board;
 import Board.Grid.GridCells.StandardCell;
+import Patterns.StatePackage.ActivePlayerState;
 import Patterns.StatePackage.State;
 import SupportingObjects.Cards.Card;
 import SupportingObjects.Cards.Deck;
@@ -23,6 +24,7 @@ public class Player extends PlayerAB {
 
     public Player(String name, Board board, int diceNumber) {
         super(name, board, diceNumber);
+        this.state = new ActivePlayerState(this);
         setDicesNumber(this.dicesNumber);
         PARKINGTERMcards = new ArrayList<>();
     }
@@ -78,7 +80,7 @@ public class Player extends PlayerAB {
                 sum += d.throwDice();
             }
             this.diceResult = sum;
-            this.sendNotification(Token.THROW.name() + "-" + this.name + "-" + this.diceResult);
+            this.sendNotification(Token.THROW.name() + "-" + this.name + "-" + sum);
             return sum == 12;
         }
         return false;

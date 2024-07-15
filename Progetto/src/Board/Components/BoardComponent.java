@@ -33,6 +33,11 @@ public class BoardComponent implements BoardComponentIF {
     }
 
     @Override
+    public String name() {
+        return type.name();
+    }
+
+    @Override
     public boolean isLadder() {
         return this.type.equals(Type.LADDER);
     }

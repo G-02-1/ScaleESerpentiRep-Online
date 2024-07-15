@@ -49,6 +49,10 @@ public class StandardCell extends Cell {
         return this.boardComponent != null && !this.ACTIVE;
     }
 
+    public BoardComponentIF getBoardComponent() {
+        return boardComponent;
+    }
+
     public void setBoardComponent(BoardComponent boardComponent) throws IllegalPositioningException {
         try {
             if(containsBoardComponentActive() || containsBoardComponentPassive()) {
@@ -60,14 +64,14 @@ public class StandardCell extends Cell {
                     PASSIVE = (StandardCell) board.setPassivePosition(boardComponent);
                     if(PASSIVE != null) {
                         this.boardComponent = boardComponent;
-                        ACTIVE = true;
+                        this.ACTIVE = true;
                     } else {
                         throw new IllegalPositioningException("setPassivePosition(boardComponent) failed!");
                     }
                 }
                 else if(this.getPosition().equals(boardComponent.getPassivePosition())) {
                     this.boardComponent = boardComponent;
-                    ACTIVE = false;
+                    this.ACTIVE = false;
                 }
                 else {
                     throw new IllegalPositioningException("Illegal positioning: unmatched position");

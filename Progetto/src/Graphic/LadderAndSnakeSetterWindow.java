@@ -5,6 +5,7 @@ import Board.Grid.GridBoard.Board;
 import Board.Grid.GridCells.Cell;
 import Board.Grid.GridCells.SpecialCell;
 import Board.Grid.GridCells.StandardCell;
+import SimulationObject.Simulation;
 import SupportingObjects.Position;
 import SupportingObjects.Token;
 
@@ -12,19 +13,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class LadderAndSnakeSetterWindow {
     private JFrame frame;
     private JButton[][] gridButtons;
-    private boolean placingLadder, placingSnakes;
-    private int gridSizeX, gridSizeY, selectedX1, selectedY1, selectedX2, selectedY2, cellCounter, snakeCounter, ladderCounter;
+    private boolean placingLadder, placingSnakes, CUSTOM, CARDS = false, SPECIALCARD = false, LadderAndSnakeSetter;
+    private int dicesNumber, gridSizeX, gridSizeY, selectedX1, selectedY1, selectedX2, selectedY2, cellCounter, snakeCounter, ladderCounter;
     private Board board;
-    private Cell[][] cells;
+    private ArrayList<String> playersNames = new ArrayList<>();
 
+    private Cell[][] cells;
     private JButton snakeButton, ladderButton;
 
-    public LadderAndSnakeSetterWindow(Board board) {
+    public LadderAndSnakeSetterWindow(Board board, ArrayList<String> playersNames, int dicesNumber, boolean SPECIALCARD, boolean CARDS) {
         this.board = board;
+        this.playersNames = new ArrayList<>(playersNames);
+        this.dicesNumber = dicesNumber;
+        this.SPECIALCARD = SPECIALCARD;
+        this.CARDS = CARDS;
         this.ladderCounter = 0;
         this.snakeCounter = 0;
         int x = board.getX();
@@ -86,7 +93,8 @@ public class LadderAndSnakeSetterWindow {
             if(snakeCounter < board.getBOARDCOMPONENTNUMBER() / 2) {
                showError("Cannot instantiate a board with snakes' number minor than " + this.board.getBOARDCOMPONENTNUMBER() / 2);
            } else {
-
+                frame.dispose();
+               openGameWindow();
             }
             System.out.println("Next button clicked");
         });
@@ -117,7 +125,7 @@ public class LadderAndSnakeSetterWindow {
                 if (ladderCounter == board.getBOARDCOMPONENTNUMBER() / 2 && snakeCounter == board.getBOARDCOMPONENTNUMBER() / 2) {
                     ladderButton.setEnabled(false);
                     snakeButton.setEnabled(false);
-                    showSuccess("Click next to start the simulation");
+                    showMessage("Click next to start the simulation");
                 }
                 else if (cellCounter == 0) {
                     selectedX1 = x;
@@ -128,7 +136,9 @@ public class LadderAndSnakeSetterWindow {
                     selectedY2 = y;
                     cellCounter++;
 
-                    if (placingLadder) {
+                    if(cells[selectedX1][selectedY1].getNumber() == 0 || cells[selectedX1][selectedY1].getNumber() == board.getAllCells().getLast().getNumber()) {
+                        showError("Cannot place a board component on the first or last cell");
+                    } else if (placingLadder) {
                         if (ladderCounter == board.getBOARDCOMPONENTNUMBER() / 2) {
                             ladderButton.setEnabled(false);
                             showMessage("Placed the maximum ladders' number");
@@ -136,7 +146,6 @@ public class LadderAndSnakeSetterWindow {
                         }
                         else if (cells[selectedX1][selectedY1].compareTo(cells[selectedX2][selectedY2]) == 0) {
                             showError("Cannot place a ladder on the same cell!");
-                            System.out.println("Ladder celle uguali");
                             cellCounter = 0;
                         }
                         else if(cells[selectedX1][selectedY1].compareTo(cells[selectedX2][selectedY2]) == 1) {
@@ -207,12 +216,13 @@ public class LadderAndSnakeSetterWindow {
         JOptionPane.showMessageDialog(frame, message, "Message", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void showSuccess(String message) {
-        JOptionPane.showMessageDialog(frame, message, "Success", JOptionPane.OK_OPTION);
-    }
-
     private void showError(String message) {
         JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void openGameWindow() {
+        GamePlayWindow gamePlayWindow = new GamePlayWindow(new Simulation(new Simulation.Builder(board, playersNames).dicesNumber(dicesNumber).SPECIALCARD(SPECIALCARD).CARD(CARDS)));
+        gamePlayWindow.setVisible(true);
     }
 
     public void show() {

@@ -3,6 +3,7 @@ package Graphic;
 import Board.Grid.GridBoard.Board;
 import Patterns.StatePackage.State;
 import SimulationObject.Simulation;
+import SupportingObjects.Cards.Card;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class SecondWindow extends JFrame {
-    private State state;
     private int dicesNumber, X, Y, NPlayer;
     private boolean CUSTOM, CARDS = false, SPECIALCARD = false, LadderAndSnakeSetter;
     private Board board;
@@ -72,9 +72,6 @@ public class SecondWindow extends JFrame {
             }
         });
 
-
-        // Add other components and logic as needed
-
         setLocationRelativeTo(null);
         add(panel);
     }
@@ -85,14 +82,14 @@ public class SecondWindow extends JFrame {
         dialog.setSize(800, 200);
         dialog.setLayout(new GridLayout(5, 2));
 
-        JLabel widthLabel = new JLabel("Width (4-15):");
-        SpinnerModel widhtSpinnerModel = new SpinnerNumberModel(4, 4, 15, 1);
+        JLabel widthLabel = new JLabel("Width (4-10):");
+        SpinnerModel widhtSpinnerModel = new SpinnerNumberModel(4, 4, 10, 1);
         JSpinner widhtNumberSpinner = new JSpinner(widhtSpinnerModel);
         dialog.add(widthLabel);
         dialog.add(widhtNumberSpinner);
 
-        JLabel heightLabel = new JLabel("Height (5-15):");
-        SpinnerModel heightSpinnerModel = new SpinnerNumberModel(5, 5, 15, 1);
+        JLabel heightLabel = new JLabel("Height (5-10):");
+        SpinnerModel heightSpinnerModel = new SpinnerNumberModel(5, 5, 10, 1);
         JSpinner heightNumberSpinner = new JSpinner(heightSpinnerModel);
         dialog.add(heightLabel);
         dialog.add(heightNumberSpinner);
@@ -112,7 +109,6 @@ public class SecondWindow extends JFrame {
         JCheckBox LSsetterCheckBox = new JCheckBox("Do you want to set the Ladders' and Snakes' position?");
         dialog.add(LSsetterCheckBox);
 
-        // Creazione del pulsante "OK"
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -172,6 +168,8 @@ public class SecondWindow extends JFrame {
                 else {
                     parentFrame.dispose();
                     board = new Board(X, Y, CUSTOM, CARDS);
+                    board.putBoardComponent();
+                    System.out.println(board);
                     openGameWindow();
                 }
             }
@@ -200,7 +198,7 @@ public class SecondWindow extends JFrame {
 
     private void showSetLadderAndSnakeDialog(JFrame parentFrame) {
         this.board = new Board(this.X, this.Y, this.CUSTOM, this.CARDS);
-        LadderAndSnakeSetterWindow ladderAndSnakeSetterWindow = new LadderAndSnakeSetterWindow(board);
+        LadderAndSnakeSetterWindow ladderAndSnakeSetterWindow = new LadderAndSnakeSetterWindow(board, playersNames, dicesNumber, SPECIALCARD, CARDS);
         ladderAndSnakeSetterWindow.show();
     }
 
@@ -229,6 +227,9 @@ public class SecondWindow extends JFrame {
                 }
                 else {
                     parentFrame.dispose();
+                    board = new Board(X, Y, CUSTOM, CARDS);
+                    board.putBoardComponent();
+                    System.out.println(board);
                     openGameWindow();
                 }
             }
@@ -241,9 +242,9 @@ public class SecondWindow extends JFrame {
     }
 
     public void openGameWindow() {
-        // Create and show the SecondWindow
-
-        GameWindow gameWindow = new GameWindow(board, playersNames, SPECIALCARD);
-        gameWindow.setVisible(true);
+        dispose();
+        System.out.println("Prima della finestra di gioco: " + board);
+        GamePlayWindow gamePlayWindow = new GamePlayWindow(new Simulation(new Simulation.Builder(this.board, this.playersNames).dicesNumber(this.dicesNumber).SPECIALCARD(this.SPECIALCARD).CARD(this.CARDS)));
+        gamePlayWindow.setVisible(true);
     }
 }

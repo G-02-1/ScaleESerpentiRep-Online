@@ -8,6 +8,11 @@ import java.util.LinkedList;
 public interface BoardComponentIF extends Serializable {
 
     /**
+     * This method print boardComponent's type name.
+     */
+    String name();
+
+    /**
      *
      * @return true if is a Ladder board component.
      */

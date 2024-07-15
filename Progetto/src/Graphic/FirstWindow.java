@@ -65,7 +65,6 @@ public class FirstWindow extends JFrame {
                         Simulation simulation = restore(selectedFile.getAbsolutePath());
 
                         ((JFrame) SwingUtilities.getWindowAncestor(uploadSimulationButton)).dispose();
-                        // Open the "GamePlay" window (replace with your actual code) //TODO
                         openGamePlayWindow(simulation);
 
                     } else {
@@ -84,8 +83,8 @@ public class FirstWindow extends JFrame {
     }
 
     private void openGamePlayWindow(Simulation simulation) {
-        // Implement your "GamePlay" window here
-        // ...
+        GamePlayWindow gamePlayWindow = new GamePlayWindow(simulation);
+        gamePlayWindow.show();
     }
 
     public void openSecondWindow() {
@@ -97,7 +96,7 @@ public class FirstWindow extends JFrame {
         try {
             FileInputStream door = new FileInputStream(filePath);
             ObjectInputStream reader = new ObjectInputStream(door);
-            Simulation.MementoSimulation x = (Simulation.MementoSimulation) reader.readObject();
+            Simulation x = (Simulation) reader.readObject();
             return Simulation.Backuper.backup(x);
         } catch (IOException | ClassNotFoundException e) {
             showError("The selected file has unidentified problem");

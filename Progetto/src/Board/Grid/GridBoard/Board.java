@@ -22,9 +22,9 @@ public class Board implements Grid {
     public Board(int X, int Y, boolean custom, boolean cards) {
         this.CELLNUMBER = X * Y;
         int expectedSpecialCellsNumber = 0;
-        if (this.CELLNUMBER < 20 || this.CELLNUMBER > 225) { //My decision
+        if (this.CELLNUMBER < 20 || this.CELLNUMBER > 100) { //My decision
             throw new BoardInstantiationException("Impossible to instantiate a board with " + this.CELLNUMBER + ", cell");
-        } else if (X < 4 || Y < 5 || X > 15 || Y > 15) { //My decision (4 * 5 = 20, 15 * 15 = 225)
+        } else if (X < 4 || Y < 5 || X > 10 || Y > 10) { //My decision
             throw new BoardInstantiationException("Impossible to instantiate a board " + X + " wide and " + Y + " high");
         }
         else {
@@ -141,44 +141,32 @@ public class Board implements Grid {
     public void putBoardComponent() {
         int numberOfLadder = this.BOARDCOMPONENTNUMBER / 2;
         int numberOfSnake = this.BOARDCOMPONENTNUMBER / 2;
-        final int maxExtension = 3;
-        boolean goOn = true;
-        while(goOn) {
+        boolean goON = true;
+        while(goON) {
             ArrayList<Cell> assignable = this.assignableCells();
-            StandardCell candidate = (StandardCell) assignable.get(new Random().nextInt(assignable.size()));
-            ArrayList<StandardCell> candidates = findRange(candidate, assignable, maxExtension);
-            StandardCell passive = findPassive(candidate, candidates);
-            if(candidate.compareTo(passive) == -1 && numberOfLadder > 0) {
-                candidate.setBoardComponent(new BoardComponent(Token.LADDER.name(), candidate.getPosition(), passive.getPosition()));
-                numberOfLadder--;
+            int activeIndex = new Random().nextInt(assignable.size());
+            int passiveIndex = new Random().nextInt(assignable.size());
+            while(activeIndex == passiveIndex) {
+                passiveIndex = new Random().nextInt(assignable.size());
             }
-            if(candidate.compareTo(passive) == 1 && numberOfSnake > 0) {
-                candidate.setBoardComponent(new BoardComponent(Token.SNAKE.name(), candidate.getPosition(), passive.getPosition()));
-                numberOfSnake--;
-            }
-            if(numberOfLadder == 0 && numberOfSnake == 0) {
-                goOn = false;
-            }
-        }
-    }
-
-    private ArrayList<StandardCell> findRange(Cell candidate, ArrayList<Cell> assignable, int maxExtension) {
-        ArrayList<StandardCell> range = new ArrayList<>();
-        for(Cell cell: assignable) {
-            if(cell.getPosition().getX() <= candidate.getPosition().getX() + maxExtension && cell.getPosition().getX() >= candidate.getPosition().getX() - maxExtension &&
-                    cell.getPosition().getY() <= candidate.getPosition().getY() + maxExtension && cell.getPosition().getY() >= candidate.getPosition().getY() - maxExtension) {
-                range.add((StandardCell) cell);
+            if(this.getCellNumber(assignable.get(activeIndex).getNumber()) instanceof StandardCell && this.getCellNumber(assignable.get(passiveIndex).getNumber()) instanceof StandardCell) {
+                StandardCell active = (StandardCell) this.getCellNumber(assignable.get(activeIndex).getNumber());
+                StandardCell passive = (StandardCell) this.getCellNumber(assignable.get(passiveIndex).getNumber());
+                if(active.compareTo(passive) == -1 && numberOfLadder > 0) {
+                    active.setBoardComponent(new BoardComponent(Token.LADDER.name(), active.getPosition(), passive.getPosition()));
+                    this.structure.put(active, new ArrayList<Player>());
+                    numberOfLadder--;
+                }
+                else if(active.compareTo(passive) == 1 && numberOfSnake > 0) {
+                    active.setBoardComponent(new BoardComponent(Token.SNAKE.name(), active.getPosition(), passive.getPosition()));
+                    this.structure.put(active, new ArrayList<Player>());
+                    numberOfSnake--;
+                }
+                else if((numberOfLadder == 0 && numberOfSnake == 0) || assignable.size() < 2) {
+                    goON = false;
+                }
             }
         }
-        return range;
-    }
-
-    private StandardCell findPassive(StandardCell candidate, ArrayList<StandardCell> candidates) {
-        StandardCell cell = candidates.get(new Random().nextInt(candidates.size()));
-        while(cell.getPosition().getY() == candidate.getPosition().getY()) {
-            cell = candidates.get(new Random().nextInt(candidates.size()));
-        }
-        return cell;
     }
 
     public int getCELLNUMBER() {
@@ -211,6 +199,19 @@ public class Board implements Grid {
 
     public int getPICKACARDNUMBER() {
         return PICKACARDNUMBER;
+    }
+
+    @Override
+    public ArrayList<Cell> assignableCells() {
+        ArrayList<Cell> assignable = new ArrayList<>();
+        for(Cell c : this.getAllCells()) {
+            if (!(c instanceof SpecialCell || ((StandardCell) c).containsBoardComponentActive() ||
+                    ((StandardCell) c).containsBoardComponentPassive()) || c.getNumber() == 1 ||
+                    c.getNumber() == this.getAllCells().getLast().getNumber()) {
+                assignable.add(c);
+            }
+        }
+        return assignable;
     }
 
     @Override

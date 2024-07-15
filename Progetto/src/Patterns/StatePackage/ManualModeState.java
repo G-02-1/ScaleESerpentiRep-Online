@@ -7,7 +7,7 @@ public class ManualModeState extends State {
 
     public ManualModeState(Object o) {
         if(!(o instanceof Simulation)) {
-            throw new InvalidStateInstantiationException("Cannot instantiate an StoppedSimulationState for a not Simulation object");
+            throw new InvalidStateInstantiationException("Cannot instantiate a ManualModeState for a not Simulation object");
         } else {
             this.o = (Simulation) o;
         }

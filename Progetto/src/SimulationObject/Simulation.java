@@ -4,35 +4,34 @@ import Board.Grid.GridBoard.Board;
 import Exceptions.IllegalSimulationInitializzation;
 import Patterns.Memento.Memento;
 import Patterns.Memento.Originator;
+import Patterns.ObserverComunication.Manager;
 import Patterns.ObserverComunication.Subscriber;
 import Patterns.StatePackage.AutomaticModeState;
 import Patterns.StatePackage.State;
 import PlayerObjects.Player;
 import SupportingObjects.Token;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class Simulation implements Subscriber, Originator { //Facade, Observer, Builder
+public class Simulation implements Originator, Serializable, Subscriber { //Facade, Observer, Builder
 
-    private State state;
-    private final int dicesNumber, X, Y, NPlayer;
+    private State state = new AutomaticModeState(this);;
+    private final int dicesNumber, NPlayer;
     private final boolean CUSTOM, CARD, SPECIALCARD;
 
     //SIMULATION COMPONENTS
     private final Board board;
     private final ArrayList<Player> players;
+    private boolean canStop;
 
-    public class Builder {
+    public static class Builder {
 
-        private final int X, Y, NPlayers;
+        private final int NPlayers;
         private final boolean CUSTOM;
         private int dicesNumber = 0;
         private ArrayList<Player> players;
@@ -40,34 +39,22 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
         private ArrayList<String> playersNames;
         private State state;
         private Board board;
-
-
         public Builder(int X, int Y, int nPlayers, boolean custom) {
-            if(X == 0 && Y == 0) {
-                this.X = 10;
-                this.Y = 10;
-            } else {
-                this.X = X;
-                this.Y = Y;
-            }
-            this.NPlayers =nPlayers;
+            this.NPlayers = nPlayers;
             this.CUSTOM = custom;
             this.players = new ArrayList<>();
             this.playersNames = new ArrayList<>();
         }
 
         public Builder(Board board, ArrayList<String> playersNames) {
-            this.X = board.getX();
-            this.Y = board.getY();
+            this.board = board;
             this.NPlayers = playersNames.size();
-            this.CUSTOM = board.isCustom();
+            this.CUSTOM = this.board.isCustom();
             this.playersNames = new ArrayList<>(playersNames);
         }
 
         public Builder(Simulation simulation) {
             this.state = simulation.state;
-            this.X = simulation.X;
-            this.Y = simulation.Y;
             this.NPlayers = simulation.NPlayer;
             this.CUSTOM = simulation.CUSTOM;
             this.CARD = simulation.CARD;
@@ -78,16 +65,12 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
         }
 
         public Builder dicesNumber(int val) {
-            if(!CUSTOM) {
-                throw new IllegalSimulationInitializzation("Cannot choose the dices' number for a STANDARD simulation");
-            }
-            else {
-                this.dicesNumber = val;
-                return this;
-            }
+            this.dicesNumber = val;
+            return this;
         }
+
         public Builder CARD(boolean val) {
-            if(!CUSTOM) {
+            if(!CUSTOM && val) {
                 throw new IllegalSimulationInitializzation("Cannot have cards for a STANDARD simulation");
             }
             else {
@@ -95,8 +78,9 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
                 return this;
             }
         }
+
         public Builder SPECIALCARD(boolean val) {
-            if(!CUSTOM) {
+            if(!CUSTOM && val) {
                 throw new IllegalSimulationInitializzation("Cannot have special cards for a STANDARD simulation");
             }
             else {
@@ -136,17 +120,13 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
             return this;
         }
     }//BUILDER
-
     public class MementoSimulation implements Memento {
         private final Simulation simulation;
 
         private MementoSimulation(Simulation simulation) {
-            this.simulation = new Simulation(new Builder(simulation.X, simulation.Y, simulation.NPlayer,
-                    simulation.isCUSTOM()).State(simulation.state).dicesNumber(simulation.dicesNumber).CARD(simulation.CARD)
-                    .SPECIALCARD(simulation.SPECIALCARD).Board(simulation.board).players(simulation.players));
+            this.simulation = simulation;
             saveMemento();
         }
-
         private boolean saveMemento() {
             try {
                 LocalDateTime currentDateTime = LocalDateTime.now();
@@ -156,10 +136,9 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
 
                 FileOutputStream fos = new FileOutputStream(folderPath);
 
-                // Crea un flusso di output di oggetti per serializzare l'oggetto
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-                oos.writeObject(this.simulation); // Scrive l'oggetto su un file
+                oos.writeObject(this.simulation);
                 fos.close();
 
                 System.out.println("Object successfully saved in: " + folderPath);
@@ -177,46 +156,41 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
         private Simulation originator() {
             return Simulation.this;
         }
-    } //Memento
 
+
+    } //Memento
     public static class Backuper {
         static Simulation simulation;
 
-        public static Simulation backup(MementoSimulation mementoSimulation) {
-            return simulation.backup(mementoSimulation);
+        public static Simulation backup(Simulation simulation) {
+            return simulation.backup(simulation);
         }
     }
-
-    private Simulation(Builder builder) {
+    public Simulation(Builder builder) {
         try {
             this.state = builder.state;
-            this.X = builder.X;
-            this.Y = builder.Y;
             this.NPlayer = builder.NPlayers;
             this.dicesNumber = builder.dicesNumber;
             this.CUSTOM = builder.CUSTOM;
             this.CARD = builder.CARD;
             this.SPECIALCARD = builder.SPECIALCARD;
+            this.canStop = false;
 
-            this.board = new Board(this.X, this.Y, this.CUSTOM, this.CARD);
+            this.board = builder.board;
             this.players = new ArrayList<>();
             for(String name : builder.playersNames) {
                 this.players.add(new Player(name, this.board, this.dicesNumber));
-                this.players.getFirst().addSubscriber(this);
             }
+            this.schedulePlayers();
         } catch (Exception e) {
             throw new IllegalSimulationInitializzation("Invalid parameters, please try again");
         }
     }
-
     public State getState() {
         return state;
     }
-    public int getX() {
-        return X;
-    }
-    public int getY() {
-        return Y;
+    public boolean canStop() {
+        return canStop;
     }
     public int getNPlayer() {
         return NPlayer;
@@ -247,12 +221,20 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
         }
 
     }
-
     public void startSimulation() throws InterruptedException {
         for(Player player : players) {
             player.turn();
             TimeUnit.SECONDS.sleep(5);
         }
+    }
+    @Override
+    public Memento save() {
+        return new MementoSimulation(this);
+    }
+
+    @Override
+    public Simulation backup(Simulation simulation) {
+        return simulation;
     }
 
     @Override
@@ -329,19 +311,9 @@ public class Simulation implements Subscriber, Originator { //Facade, Observer, 
         }
         else if(eventType.equals(Token.WIN.name())) {
             msg = playerName + " wins the game!\n";
+            this.canStop = true;
             notifica(msg);
         }
-    }
-
-    @Override
-    public Memento save() {
-        return new MementoSimulation(this);
-    }
-
-    @Override
-    public Simulation backup(Memento memento) {
-        MementoSimulation mementoSimulation = (MementoSimulation) memento;
-        return new Simulation(new Builder(mementoSimulation.getSimulation()));
     }
 
     private void notifica(String msg) {

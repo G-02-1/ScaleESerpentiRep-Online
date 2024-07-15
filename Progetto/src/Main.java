@@ -1,4 +1,6 @@
 import Board.Grid.GridBoard.Board;
+import Board.Grid.GridCells.Cell;
+import Board.Grid.GridCells.StandardCell;
 import SupportingObjects.Cards.Card;
 import SupportingObjects.Position;
 
@@ -85,66 +87,75 @@ public class Main {
 //        System.out.println((int) i.stream().max(Integer::compareTo).orElseThrow());
 //        //System.out.println(i.indexOf());
 
-        class prova implements Serializable {
-            int n;
-            String msg;
+//        class prova implements Serializable {
+//            int n;
+//            String msg;
+//
+//            public prova(int n, String msg) {
+//                this.n = n;
+//                this.msg = msg;
+//            }
+//
+//            public int getN() {
+//                return n;
+//            }
+//
+//            public String getMsg() {
+//                return msg;
+//            }
+//        }
+//
+//        prova a = new prova(1, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+//
+//        LocalDateTime currentDateTime = LocalDateTime.now();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy_HH-mm");
+//        String formattedDateTime = currentDateTime.format(formatter);
+//
+//        // Stampa la stringa risultante
+//        System.out.println(formattedDateTime);
+//
+//        // Specifica la cartella di destinazione (ad esempio, "/percorso/alla/cartella/")
+//        String folderPath = "C:\\LaddersAndSnakeFolder\\saves\\" + formattedDateTime + ".dat";
+//
+//
+//        // Specifica il percorso completo del file (incluso il nome "prova1.dat")
+//        String percorsoFile = "C:\\LaddersAndSnakeFolder\\saves\\" + formattedDateTime + ".dat";
+//
+//
+//
+//        try {
+//            // Crea un flusso di output per il file
+//            FileOutputStream fos = new FileOutputStream(percorsoFile);
+//
+//            // Crea un flusso di output di oggetti per serializzare l'oggetto
+//            ObjectOutputStream oos = new ObjectOutputStream(fos);
+//
+//            oos.writeObject(a); // Scrive l'oggetto su un file
+//            fos.close();
+//
+//            System.out.println("Oggetto salvato correttamente in: " + percorsoFile);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            FileInputStream door = new FileInputStream(percorsoFile);
+//            ObjectInputStream reader = new ObjectInputStream(door);
+//            prova x = (prova) reader.readObject();
+//            System.out.println(x.getN());
+//            System.out.println(x.getMsg());
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
-            public prova(int n, String msg) {
-                this.n = n;
-                this.msg = msg;
-            }
 
-            public int getN() {
-                return n;
-            }
-
-            public String getMsg() {
-                return msg;
+        Board board = new Board(6, 6, true, true);
+        board.putBoardComponent();
+        System.out.println(board);
+        for(Cell c : board.getAllCells()) {
+            if(c instanceof StandardCell) {
+                System.out.println(c.getNumber() + ": " + ((StandardCell) c).containsBoardComponentActive() + ", " + ((StandardCell) c).containsBoardComponentPassive());
             }
         }
-
-        prova a = new prova(1, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy_HH-mm");
-        String formattedDateTime = currentDateTime.format(formatter);
-
-        // Stampa la stringa risultante
-        System.out.println(formattedDateTime);
-
-        // Specifica la cartella di destinazione (ad esempio, "/percorso/alla/cartella/")
-        String folderPath = "C:\\LaddersAndSnakeFolder\\saves\\" + formattedDateTime + ".dat";
-
-
-        // Specifica il percorso completo del file (incluso il nome "prova1.dat")
-        String percorsoFile = "C:\\LaddersAndSnakeFolder\\saves\\" + formattedDateTime + ".dat";
-
-
-
-        try {
-            // Crea un flusso di output per il file
-            FileOutputStream fos = new FileOutputStream(percorsoFile);
-
-            // Crea un flusso di output di oggetti per serializzare l'oggetto
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(a); // Scrive l'oggetto su un file
-            fos.close();
-
-            System.out.println("Oggetto salvato correttamente in: " + percorsoFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            FileInputStream door = new FileInputStream(percorsoFile);
-            ObjectInputStream reader = new ObjectInputStream(door);
-            prova x = (prova) reader.readObject();
-            System.out.println(x.getN());
-            System.out.println(x.getMsg());
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
     }
 }

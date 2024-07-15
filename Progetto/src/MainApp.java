@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class MainApp {
-    protected static final String folderPath = "C:\\LaddersAndSnakeFolder";
+    protected static final String folderPath = "C:\\LaddersAndSnakeFolder\\saves";
     public static void main(String[] args) {
 
         //Create simulation's folder (if he doesn't exist)

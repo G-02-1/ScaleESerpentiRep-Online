@@ -1,9 +1,10 @@
 package SupportingObjects;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Position implements Comparable<Position> {
+public class Position implements Comparable<Position>, Serializable {
 
     int X, Y;
 
