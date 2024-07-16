@@ -59,6 +59,8 @@ public class LadderAndSnakeSetterWindow {
                 if(cells[i][j] instanceof SpecialCell) {
                     gridButtons[i][j] = new JButton(""+cells[i][j].getNumber()+": SPEICAL ");
                     gridButtons[i][j].setEnabled(false); //the special cells aren't placeable
+                } else if(cells[i][j].getNumber() == 1 || cells[i][j].getNumber() == this.board.getLastCell().getNumber()) {
+                    gridButtons[i][j].setEnabled(false); //first and last cells aren't placeable
                 } else {
                     gridButtons[i][j] = new JButton(""+cells[i][j].getNumber()+"");
                 }
