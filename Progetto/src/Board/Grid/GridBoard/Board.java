@@ -285,9 +285,4 @@ public class Board implements Grid {
         }
         return sb.toString();
     }
-
-    @Override
-    public Iterator<Cell> iterator() {
-        return this.structure.keySet().iterator();
-    }
 }

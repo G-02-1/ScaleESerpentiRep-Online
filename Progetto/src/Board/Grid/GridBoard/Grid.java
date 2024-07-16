@@ -187,11 +187,4 @@ public interface Grid extends Iterable, Serializable {
             return null;
         }
     }
-
-    /**
-     *
-     * @return the specific iterator for the board's structure.
-     */
-    @Override
-    Iterator<Cell> iterator();
 }
