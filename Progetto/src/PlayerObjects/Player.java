@@ -48,31 +48,30 @@ public class Player extends PlayerAB {
 
     @Override
     public void turn() throws InterruptedException {
-        if(this.state.move()) { //mechanism that returns true if the player is active and false if it is blocked (decreasing the waiting turns)
-            boolean anotherTurn = throwDice(this.position);
-            TimeUnit.SECONDS.sleep(4);
-            Position newPosition = this.computePosition(diceResult);
-            this.move(newPosition);
-            if (this.currentCell.equals(this.board.getLastCell())) {
-                this.win();
-            }
-            if(anotherTurn) {
-                this.sendNotification(Token.ANOTHER.name() + "-" + this.name);
-                this.turn();
-            }
+        boolean anotherTurn = throwDice(this.position);
+        TimeUnit.SECONDS.sleep(2);
+        Position newPosition = this.computePosition(diceResult);
+        this.move(newPosition);
+        if (this.currentCell.equals(this.board.getLastCell())) {
+            this.win();
+        }
+        if(anotherTurn) {
+            this.sendNotification(Token.ANOTHER.name() + "-" + this.name);
+            this.turn();
         }
     }
 
     @Override
     public boolean throwDice(Position position) {
         int criticalValue = board.getCriticalValue();
-        if(this.dicesNumber == 1)
-            this.diceResult = dices[0].throwDice();
-        this.sendNotification(Token.THROW.name() + "-" + this.name + "-" + this.diceResult);
         if(this.currentNumber >= criticalValue) {
             this.almostWon();
             this.diceResult = dices[0].throwDice();
             this.sendNotification(Token.THROW.name() + "-" + this.name + "-" + this.diceResult);
+        }
+        else if(this.dicesNumber == 1) {
+                this.diceResult = dices[0].throwDice();
+                this.sendNotification(Token.THROW.name() + "-" + this.name + "-" + this.diceResult);
         }
         else {
             int sum = 0;
@@ -92,9 +91,10 @@ public class Player extends PlayerAB {
 
     private Position computePosition(int diceResult) {
         int totalCells = this.board.getCellsNumber();
-        int nextCellNumber = this.currentNumber + dicesNumber;
+        int nextCellNumber = this.currentNumber + diceResult;
         if(totalCells < nextCellNumber) {
-            int surplus = totalCells - nextCellNumber;
+            System.out.println("SURPLUSSSSSSSS");
+            int surplus = nextCellNumber - totalCells;
             this.retreat(surplus);
             return board.getCellNumber(totalCells - surplus).getPosition();
             //if the number thrown is greater than the total number of cells, then retreat
@@ -112,6 +112,7 @@ public class Player extends PlayerAB {
     public void move(Position newPosition) throws InterruptedException {
         try {
             this.setPosition(newPosition);
+            System.out.println(newPosition);
             this.sendNotification(Token.ARRIVE.name() + "-" + this.name + "-" + this.currentNumber);
             TimeUnit.SECONDS.sleep(4);
             int ACTION = this.currentCell.triggerEffect();
@@ -178,8 +179,8 @@ public class Player extends PlayerAB {
     if he rolls 12 from a DICES cell or from a DICES card, then he will not throw the dices again
      */
     public void throwAgain() throws InterruptedException {
-        this.throwDice(this.position);
         this.sendNotification(Token.THROWAGAIN.name() + "-" + this.name);
+        this.throwDice(this.position);
         Position newPosition = this.computePosition(this.diceResult);
         this.move(newPosition);
     }
@@ -193,8 +194,8 @@ public class Player extends PlayerAB {
 
     @Override
     public void standStill() {
-        this.state.setBlockedState(1);
         this.sendNotification(Token.STANDSTILL.name() + "-" + this.name);
+        this.state.setBlockedState(1);
         /*
         with a 50% of probability the player with BlockedState will use the PARKINGTERM card
         unless it's near the finish line

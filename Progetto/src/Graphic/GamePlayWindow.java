@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class GamePlayWindow extends JPanel implements Subscriber {
@@ -28,7 +29,8 @@ public class GamePlayWindow extends JPanel implements Subscriber {
     private Cell[][] cells;
     private ArrayList<Player> players;
     private JMenuItem saveItem;
-    private JButton stopSimulation, playSimulation, nextButton;
+    private JButton playSimulation, nextButton;
+    private HashMap<Player, JLabel> playersLabels;
     private boolean auto;
 
 
@@ -39,6 +41,7 @@ public class GamePlayWindow extends JPanel implements Subscriber {
         int y = board.getY();
         this.turn = -1;
         this.players = simulation.getPlayers();
+        playersLabels = new HashMap<>();
 
         for(Player p : players) {
             p.addSubscriber(this);
@@ -66,8 +69,6 @@ public class GamePlayWindow extends JPanel implements Subscriber {
                 //Populate the matrix to match the cells on the board
                 cells[i][j] = this.board.getCell(new Position(i, j));
 
-                System.out.println(board);
-
                 if(cells[i][j] instanceof SpecialCell) {
                     gridButtons[i][j] = new JButton("" + cells[i][j].getNumber() + ": " + cells[i][j].toString());
                 } else if (cells[i][j] instanceof StandardCell sCell){
@@ -78,7 +79,7 @@ public class GamePlayWindow extends JPanel implements Subscriber {
                     else if(sCell.containsBoardComponentPassive() && sCell.getBoardComponent().isSnake()) {
                         gridButtons[i][j] = new JButton(""+sCell.getNumber()+" \nSnake's tail");
                     } else if(sCell.containsBoardComponentPassive() && sCell.getBoardComponent().isLadder()) {
-                        gridButtons[i][j] = new JButton("" + sCell.getNumber() + " \nLadder's feet");
+                        gridButtons[i][j] = new JButton("" + sCell.getNumber() + " \nLadder's top");
                     } else {
                         gridButtons[i][j] = new JButton(""+sCell.getNumber()+"");
                     }
@@ -89,6 +90,10 @@ public class GamePlayWindow extends JPanel implements Subscriber {
                 gridPanel.add(gridButtons[i][j]);
             }
         }
+        System.out.println(board);
+        for(Cell c : board.getAllCells()) {
+            System.out.println(c.getPosition() + ": " + c.getNumber());
+        }
 
         JPanel buttonPanel = new JPanel();
         this.nextButton = new JButton("Next");
@@ -98,27 +103,13 @@ public class GamePlayWindow extends JPanel implements Subscriber {
 
         nextButton.addActionListener(e -> {
             auto = false;
-            this.stopSimulation.setEnabled(false);
             this.playSimulation.setEnabled(true);
-            turn = (turn + 1 + this.simulation.getNPlayer()) % this.simulation.getNPlayer();
+            increaseTurn();
             try {
-                players.get(turn).turn();
+                movePlayer();
             } catch (InterruptedException ex) {
                 throw new RuntimeException(ex);
             }
-            System.out.println("Next button clicked");
-        });
-
-        this.stopSimulation = new JButton("Pause");
-        if(!auto) {
-            stopSimulation.setEnabled(false);
-        }
-
-        stopSimulation.addActionListener(e -> {
-            auto = false;
-            this.nextButton.setEnabled(true);
-            this.playSimulation.setEnabled(true);
-            stopSimulation.setEnabled(false);
             System.out.println("Next button clicked");
         });
 
@@ -130,12 +121,12 @@ public class GamePlayWindow extends JPanel implements Subscriber {
         playSimulation.addActionListener(e -> {
             playSimulation.setEnabled(false);
             nextButton.setEnabled(false);
-            stopSimulation.setEnabled(true);
+            auto = true;
             while(auto) {
-                turn = (turn + 1 + this.simulation.getNPlayer()) % this.simulation.getNPlayer();
+                increaseTurn();
                 try {
-                    players.get(turn).turn();
-                } catch (InterruptedException ex) {
+                    movePlayer();
+                } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -225,12 +216,13 @@ public class GamePlayWindow extends JPanel implements Subscriber {
         JPanel playersLabel = new JPanel();
         playersLabel.setLayout(new GridLayout(this.simulation.getNPlayer(), 1));
 
-        Color[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.ORANGE, Color.MAGENTA};
+//        Color[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.ORANGE, Color.MAGENTA};
 
         for (int i = 0; i < this.simulation.getNPlayer(); i++) {
             JLabel label = new JLabel(players.get(i).getName());
-            label.setForeground(colors[i]);
+//            label.setForeground(colors[i]);
             playersLabel.add(label);
+            playersLabels.put(players.get(i), label);
         }
 
 //        if(this.simulation.getDicesNumber() == 2) {
@@ -255,15 +247,15 @@ public class GamePlayWindow extends JPanel implements Subscriber {
 //        buttonPanel.add(throwButton);
 //        buttonPanel.add(resultLabel);
         buttonPanel.add(nextButton);
-        buttonPanel.add(stopSimulation);
         buttonPanel.add(playSimulation);
 
         //__________________________________________________________________________________________
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gridPanel, playersLabel);
-        splitPane.setResizeWeight(0.7); // Adjust as needed
-        frame.add(splitPane, BorderLayout.CENTER);
+//        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gridPanel, playersLabel);
+//        splitPane.setResizeWeight(0.7); // Adjust as needed
+//        frame.add(splitPane, BorderLayout.CENTER);
         //__________________________________________________________________________________________
 
+        frame.add(gridPanel, BorderLayout.CENTER);
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.setLocationRelativeTo(null);
         frame.pack();
@@ -281,11 +273,11 @@ public class GamePlayWindow extends JPanel implements Subscriber {
         String eventType = parts[0];
         String playerName = parts[1];
         if(eventType.equals(Token.ANOTHER.name())) {
-            msg = playerName + " threw a double six, so " + playerName + " will throw again the dices!\n";
+            msg = playerName + " threw a double six, so: " + playerName + " will throw again the dices!\n";
             showMessage(msg);
         }
         else if(eventType.equals(Token.ALMOST.name())) {
-            msg = playerName + " is almost arrived to the finish line!\n" + parts[2] + "cells left\n";
+            msg = playerName + " has almost arrived to the finish line!\n" + parts[2] + " cells left\n";
             showMessage(msg);
         }
         else if(eventType.equals(Token.ARRIVE.name())) {
@@ -293,7 +285,7 @@ public class GamePlayWindow extends JPanel implements Subscriber {
             showMessage(msg);
         }
         else if(eventType.equals(Token.CLIMB.name())) {
-            msg = "How lucky! " + playerName + " encounters a ladder!" + playerName + " goes to " + parts[2] + "\n";
+            msg = "How lucky!\n" + playerName + " encounters a ladder!\n" + playerName + " goes to " + parts[2] + "\n";
             showMessage(msg);
         }
         else if(eventType.equals(Token.GOTOSLEEP.name())) {
@@ -322,7 +314,7 @@ public class GamePlayWindow extends JPanel implements Subscriber {
             showMessage(msg);
         }
         else if(eventType.equals(Token.SLICE.name())) {
-            msg = "Oh crap! " + playerName + " encounters a snake!" + playerName + " goes to " + parts[2] + "\n";
+            msg = "Oh crap!\n" + playerName + " encounters a snake!\n" + playerName + " goes to " + parts[2] + "\n";
             showMessage(msg);
         }
         else if(eventType.equals(Token.STANDSTILL.name())) {
@@ -346,10 +338,24 @@ public class GamePlayWindow extends JPanel implements Subscriber {
             msg = playerName + " wins the game!\n";
             this.auto = false;
             this.playSimulation.setEnabled(false);
-            this.stopSimulation.setEnabled(false);
             this.nextButton.setEnabled(false);
-            this.saveItem.doClick();
             showMessage(msg);
+            this.saveItem.doClick();
+        }
+    }
+
+    private void increaseTurn() {
+        this.turn = (turn + 1 + this.simulation.getNPlayer()) % this.simulation.getNPlayer();
+    }
+    private void movePlayer() throws InterruptedException {
+        Player player = players.get(this.turn);
+        if(player.getState().move()) {
+            System.out.println(player.getName() + " può muoversi? " + player.getState().move());
+            player.turn();
+        } else {
+            System.out.println(player.getName() + " può muoversi? " + player.getState().move());
+            increaseTurn();
+            movePlayer();
         }
     }
 
@@ -379,6 +385,19 @@ public class GamePlayWindow extends JPanel implements Subscriber {
                     message = message + "\nIs the final position of a: " + ((StandardCell) cell).getBoardComponent().name();
                 }
             }
+            int nP = 0;
+            StringBuilder sb = new StringBuilder();
+            sb.append("\nPlayers: ");
+            for(Player player : players) {
+                if(player.getCurrentNumber() == cell.getNumber()) {
+                    sb.append("\n" + player.getName());
+                    nP++;
+                }
+            }
+            if(nP == 0) {
+                sb.append("\nNo one player on this cell");
+            }
+            message = message + sb;
             showMessage(message);
         }
     }
@@ -387,15 +406,12 @@ public class GamePlayWindow extends JPanel implements Subscriber {
         int result = JOptionPane.showConfirmDialog(frame, message, "Confirmation", JOptionPane.YES_NO_OPTION);
         return result == JOptionPane.YES_OPTION;
     }
-
     private void showMessage(String message) {
         JOptionPane.showMessageDialog(frame, message, "Message", JOptionPane.INFORMATION_MESSAGE);
     }
-
     private void showError(String message) {
         JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
-
     public void show() {
         SwingUtilities.invokeLater(() -> frame.setVisible(true));
     }

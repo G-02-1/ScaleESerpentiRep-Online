@@ -95,7 +95,12 @@ public class StandardCell extends Cell {
             }
         }
         if(this.containsBoardComponentPassive()) {
-            sb.append("\nContains the head of a snake");
+            if(this.boardComponent.isLadder()) {
+                sb.append("\nContains the top of a ladder");
+            }
+            if(this.boardComponent.isSnake()) {
+                sb.append("\nContains the tail of a snake");
+            }
         }
         return sb.toString();
     }

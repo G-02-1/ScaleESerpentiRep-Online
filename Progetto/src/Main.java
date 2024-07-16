@@ -1,6 +1,8 @@
 import Board.Grid.GridBoard.Board;
 import Board.Grid.GridCells.Cell;
 import Board.Grid.GridCells.StandardCell;
+import PlayerObjects.Player;
+import SimulationObject.Simulation;
 import SupportingObjects.Cards.Card;
 import SupportingObjects.Position;
 
@@ -149,13 +151,29 @@ public class Main {
 //        }
 
 
-        Board board = new Board(6, 6, true, true);
-        board.putBoardComponent();
-        System.out.println(board);
-        for(Cell c : board.getAllCells()) {
-            if(c instanceof StandardCell) {
-                System.out.println(c.getNumber() + ": " + ((StandardCell) c).containsBoardComponentActive() + ", " + ((StandardCell) c).containsBoardComponentPassive());
-            }
+        while(true) {
+            Board board = new Board(10, 10, true, true);
+            board.putBoardComponent();
+            System.out.println(((StandardCell) board.getCell(new Position(0,0))).containsBoardComponentActive());
+            System.out.println(((StandardCell) board.getCell(new Position(9,9))).containsBoardComponentActive());
         }
+
+//        ArrayList<String> playersNames = new ArrayList<>();
+//        playersNames.add("player1");
+//        playersNames.add("player2");
+//        playersNames.add("player3");
+//        playersNames.add("player4");
+//
+//        Simulation simulation = new Simulation(new Simulation.Builder(board, playersNames));
+//        for(Player p : simulation.getPlayers()) {
+//            System.out.println(p);
+//        }
+//        board.putBoardComponent();
+//        System.out.println(board);
+//        for(Cell c : board.getAllCells()) {
+//            if(c instanceof StandardCell) {
+//                System.out.println(c.getNumber() + ": " + ((StandardCell) c).containsBoardComponentActive() + ", " + ((StandardCell) c).containsBoardComponentPassive());
+//            }
+//        }
     }
 }

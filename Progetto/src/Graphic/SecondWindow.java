@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class SecondWindow extends JFrame {
+    JFrame mainFrame;
     private int dicesNumber, X, Y, NPlayer;
     private boolean CUSTOM, CARDS = false, SPECIALCARD = false, LadderAndSnakeSetter;
     private Board board;
@@ -24,7 +25,7 @@ public class SecondWindow extends JFrame {
 
         this.firstWindow = firstWindow;
 
-        JFrame mainFrame = new JFrame();
+        mainFrame = new JFrame();
         setSize(500, 200);
         setTitle("Are you a daredevil? Choose custom simulation!");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -154,23 +155,33 @@ public class SecondWindow extends JFrame {
         JButton nextButton = new JButton("Next");
         nextButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                boolean ok = true;
                 for (int i = 0; i < NPlayer; i++) {
-                    playerNames[i] = nameFields[i].getText();
-                    playersNames.add(playerNames[i]);   System.out.println("Player " + (i + 1) + ": " + playerNames[i]);
+                    if (nameFields[i].getText().isEmpty()) {
+                        ok = false;
+                    }
                 }
-                dialog.dispose();
-                if(CUSTOM) {
-                    showSetCustomSimulationDialog(parentFrame);
-                } else if (LadderAndSnakeSetter) {
-                    parentFrame.dispose();
-                    showSetLadderAndSnakeDialog(parentFrame);
-                }
-                else {
-                    parentFrame.dispose();
-                    board = new Board(X, Y, CUSTOM, CARDS);
-                    board.putBoardComponent();
-                    System.out.println(board);
-                    openGameWindow();
+                if(ok) {
+                    for (int i = 0; i < NPlayer; i++) {
+                        playerNames[i] = nameFields[i].getText();
+                        playersNames.add(playerNames[i]);   System.out.println("Player " + (i + 1) + ": " + playerNames[i]);
+                    }
+                    dialog.dispose();
+                    if(CUSTOM) {
+                        showSetCustomSimulationDialog(parentFrame);
+                    } else if (LadderAndSnakeSetter) {
+                        parentFrame.dispose();
+                        showSetLadderAndSnakeDialog(parentFrame);
+                    }
+                    else {
+                        parentFrame.dispose();
+                        board = new Board(X, Y, CUSTOM, CARDS);
+                        board.putBoardComponent();
+                        System.out.println(board);
+                        openGameWindow();
+                    }
+                } else {
+                    showError(parentFrame, "Required fields");
                 }
             }
         });
@@ -240,7 +251,9 @@ public class SecondWindow extends JFrame {
         dialog.add(buttonPanel);
         dialog.setVisible(true);
     }
-
+    private void showError(JFrame frame, String message) {
+        JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
     public void openGameWindow() {
         dispose();
         System.out.println("Prima della finestra di gioco: " + board);

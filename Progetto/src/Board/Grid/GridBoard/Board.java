@@ -135,6 +135,27 @@ public class Board implements Grid {
             PICKACARDCounter--;
         }
         Collections.shuffle(newDisposition);
+        boolean first = false;
+        boolean last = false;
+        for(int i = 0; i < newDisposition.size(); i++) {
+            if(newDisposition.get(i).equals(Token.STANDARD.name())) {
+                if(last) {
+                    break;
+                }
+                if(!first) {
+                    newDisposition.addFirst(newDisposition.remove(i));
+                    first = true;
+                }
+                else {
+                    newDisposition.add(newDisposition.remove(i));
+                    last = true;
+                }
+            }
+        }
+        System.out.println("------------------------------------------------------------------------------------------");
+        System.out.println(newDisposition.getFirst());
+        System.out.println(newDisposition.getLast());
+        System.out.println("------------------------------------------------------------------------------------------");
         return newDisposition;
     }
 
@@ -205,9 +226,7 @@ public class Board implements Grid {
     public ArrayList<Cell> assignableCells() {
         ArrayList<Cell> assignable = new ArrayList<>();
         for(Cell c : this.getAllCells()) {
-            if (!(c instanceof SpecialCell || ((StandardCell) c).containsBoardComponentActive() ||
-                    ((StandardCell) c).containsBoardComponentPassive()) || c.getNumber() == 1 ||
-                    c.getNumber() == this.getAllCells().getLast().getNumber()) {
+            if (!(c instanceof SpecialCell || ((StandardCell) c).containsBoardComponentActive() || ((StandardCell) c).containsBoardComponentPassive() || c.getNumber() == 1 || c.getNumber() == this.X * this.Y)) {
                 assignable.add(c);
             }
         }

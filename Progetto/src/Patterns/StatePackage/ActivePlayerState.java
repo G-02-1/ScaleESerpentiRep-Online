@@ -23,28 +23,14 @@ public class ActivePlayerState extends State {
 
     @Override
     public void setBlockedState(int turns) {
-        //Do nothing
+        if(this.o instanceof Player) {
+            Player player = (Player) o;
+            player.changeState(new BlockedPlayerState(player, turns));
+        }
     }
 
     @Override
     public boolean move() {
         return true;
     }
-
-    @Override
-    public void setAutomaticModeState() {
-        //Simulation not Player, so do nothing
-    }
-
-    @Override
-    public void setManualModeState() {
-        //Simulation not Player, so do nothing
-    }
-
-    @Override
-    public boolean manual() {
-        //Simulation not Player, so return false
-        return false;
-    }
-
 }

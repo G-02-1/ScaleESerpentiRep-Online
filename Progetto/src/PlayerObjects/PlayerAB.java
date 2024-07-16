@@ -26,6 +26,20 @@ public abstract class PlayerAB extends Manager implements PlayerIF {
         this.board = board;
         this.dicesNumber = diceNumber;
         this.position = new Position(0,0);
+        this.currentCell = this.board.getCellNumber(1);
+        this.currentNumber = 1;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public Cell getCurrentCell() {
+        return currentCell;
+    }
+
+    public int getCurrentNumber() {
+        return currentNumber;
     }
 
     protected void setPosition(Position position) {
@@ -42,7 +56,7 @@ public abstract class PlayerAB extends Manager implements PlayerIF {
 
     private void updateCurrentNumber() {
         try {
-            this.currentNumber = this.board.getNumberCell(this.currentCell);
+            this.currentNumber = 1 + this.board.getNumberCell(this.board.getCell(this.position));
         } catch (Exception e) {
             e.printStackTrace();
         }

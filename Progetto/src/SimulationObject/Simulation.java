@@ -4,9 +4,7 @@ import Board.Grid.GridBoard.Board;
 import Exceptions.IllegalSimulationInitializzation;
 import Patterns.Memento.Memento;
 import Patterns.Memento.Originator;
-import Patterns.ObserverComunication.Manager;
 import Patterns.ObserverComunication.Subscriber;
-import Patterns.StatePackage.AutomaticModeState;
 import Patterns.StatePackage.State;
 import PlayerObjects.Player;
 import SupportingObjects.Token;
@@ -18,9 +16,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class Simulation implements Originator, Serializable, Subscriber { //Facade, Observer, Builder
-
-    private State state = new AutomaticModeState(this);;
+public class Simulation implements Originator, Serializable, Subscriber { //Observer, Builder
     private final int dicesNumber, NPlayer;
     private final boolean CUSTOM, CARD, SPECIALCARD;
 
@@ -54,7 +50,6 @@ public class Simulation implements Originator, Serializable, Subscriber { //Faca
         }
 
         public Builder(Simulation simulation) {
-            this.state = simulation.state;
             this.NPlayers = simulation.NPlayer;
             this.CUSTOM = simulation.CUSTOM;
             this.CARD = simulation.CARD;
@@ -168,7 +163,6 @@ public class Simulation implements Originator, Serializable, Subscriber { //Faca
     }
     public Simulation(Builder builder) {
         try {
-            this.state = builder.state;
             this.NPlayer = builder.NPlayers;
             this.dicesNumber = builder.dicesNumber;
             this.CUSTOM = builder.CUSTOM;
@@ -185,9 +179,6 @@ public class Simulation implements Originator, Serializable, Subscriber { //Faca
         } catch (Exception e) {
             throw new IllegalSimulationInitializzation("Invalid parameters, please try again");
         }
-    }
-    public State getState() {
-        return state;
     }
     public boolean canStop() {
         return canStop;
@@ -214,9 +205,8 @@ public class Simulation implements Originator, Serializable, Subscriber { //Faca
         return players;
     }
     private void schedulePlayers() {
-        Player first = this.players.get(new Random().nextInt(this.players.size()));
-        int indexOfFirst = this.players.indexOf(first);
-        for(int i = indexOfFirst; i > 0; i--) {
+        int index = new Random().nextInt(this.players.size());
+        for(int i = index; i > 0; i--) {
             this.players.add(this.players.removeFirst());
         }
 
@@ -318,9 +308,5 @@ public class Simulation implements Originator, Serializable, Subscriber { //Faca
 
     private void notifica(String msg) {
         System.out.println(msg);
-    }
-
-    public void changeState(State state) {
-        this.state = state;
     }
 }
