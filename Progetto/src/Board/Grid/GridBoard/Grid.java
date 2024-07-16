@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-public interface Grid extends Iterable, Serializable {
+public interface Grid extends Serializable {
 
     /**
      *
