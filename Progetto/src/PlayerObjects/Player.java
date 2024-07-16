@@ -174,10 +174,6 @@ public class Player extends PlayerAB {
     }
 
     @Override
-    /*
-    I assumed that a player can only take advantage of one bonus and that therefore
-    if he rolls 12 from a DICES cell or from a DICES card, then he will not throw the dices again
-     */
     public void throwAgain() throws InterruptedException {
         this.sendNotification(Token.THROWAGAIN.name() + "-" + this.name);
         this.throwDice(this.position);

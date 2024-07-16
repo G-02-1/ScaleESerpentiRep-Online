@@ -160,7 +160,8 @@ public class Simulation implements Originator, Serializable, Subscriber { //Obse
         public static Simulation backup(Simulation simulation) {
             return simulation.backup(simulation);
         }
-    }
+    } //Backupper
+
     public Simulation(Builder builder) {
         try {
             this.NPlayer = builder.NPlayers;
