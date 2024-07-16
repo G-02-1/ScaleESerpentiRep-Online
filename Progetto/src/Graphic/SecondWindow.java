@@ -134,6 +134,7 @@ public class SecondWindow extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(okButton);
         dialog.add(buttonPanel);
+        dialog.setLocationRelativeTo(parentFrame);
         dialog.setVisible(true);
         dialog.setLocationRelativeTo(this);
     }
@@ -189,6 +190,7 @@ public class SecondWindow extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(nextButton);
         dialog.add(buttonPanel);
+        dialog.setLocationRelativeTo(parentFrame);
         dialog.setVisible(true);
     }
 
@@ -248,6 +250,7 @@ public class SecondWindow extends JFrame {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(nextButton);
+        dialog.setLocationRelativeTo(parentFrame);
         dialog.add(buttonPanel);
         dialog.setVisible(true);
     }
